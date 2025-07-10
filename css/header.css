@@ -1,0 +1,98 @@
+.brand-bar {
+	background: #101a2b;
+	width: 100%;
+	padding: 0;
+	border-bottom: 1px solid #4e92e522;
+	font-size: 1rem;
+}
+
+.brand-bar-container {
+	max-width: 1200px;
+	margin: 0 auto;
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	padding: 5px 20px;
+	height: 44px;
+}
+
+.brand-menu {
+	display: flex;
+	align-items: center;
+	gap: 28px;
+	font-size: 1rem;
+	color: #b3c9e9;
+	white-space: nowrap;
+}
+
+.brand-menu span {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	font-size: 0.8rem;
+	color: #b3c9e9;
+	opacity: 0.85;
+}
+
+header {
+	background: #182a47;
+	box-shadow: 0 2px 12px #4e92e540;
+	padding: 10px 0;
+	position: sticky;
+	top: 0;
+	z-index: 100;
+}
+
+.header-flex {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.logo {
+	height: 44px;
+}
+
+.logo-flex {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	text-decoration: none;
+}
+
+.logo-circle {
+	width: 9px;
+	height: 9px;
+	border-radius: 50%;
+	background: #4e92e5;
+	display: inline-block;
+}
+
+.logo-text {
+	display: flex;
+	align-items: center;
+	gap: 7px;
+	font-size: 1.9rem;
+	font-weight: 700;
+	color: #fff;
+	letter-spacing: 0.03em;
+}
+
+.nav-list {
+	list-style: none;
+	display: flex;
+	gap: 32px;
+	margin: 0;
+	padding: 0;
+}
+
+.nav-list li a {
+	color: #fff;
+	font-size: 1rem;
+	font-weight: 500;
+	transition: color 0.2s;
+}
+
+.nav-list li a:hover {
+	color: #4e92e5;
+}
