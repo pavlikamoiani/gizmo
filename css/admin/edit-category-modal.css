@@ -1,0 +1,74 @@
+.modal {
+	display: none;
+	position: fixed;
+	z-index: 2000;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	overflow: auto;
+	background: rgba(0, 0, 0, 0.45);
+}
+
+.modal-content {
+	background: #fff;
+	margin: 6% auto;
+	padding: 32px 44px 28px 44px;
+	border-radius: 10px;
+	width: 100%;
+	max-width: 420px;
+	position: relative;
+	box-shadow: 0 4px 24px #bbb;
+}
+
+.close {
+	position: absolute;
+	right: 18px;
+	top: 12px;
+	font-size: 28px;
+	font-weight: bold;
+	color: #888;
+	cursor: pointer;
+}
+
+#editCategoryForm label {
+	display: block;
+	margin-top: 14px;
+	font-weight: 500;
+}
+
+#editCategoryForm input[type="text"] {
+	width: 100%;
+	padding: 10px;
+	margin-top: 4px;
+	border: 1.5px solid #cfd8dc;
+	border-radius: 5px;
+	box-sizing: border-box;
+	font-size: 16px;
+	background: #f9f9f9;
+	transition: border 0.2s;
+}
+
+#editCategoryForm input[type="text"]:focus {
+	border: 1.5px solid #007bff;
+	background: #fff;
+	outline: none;
+}
+
+.edit-modal-btn {
+	margin-top: 22px;
+	width: 100%;
+	padding: 12px;
+	background: linear-gradient(90deg, #007bff 60%, #00c6ff 100%);
+	color: #fff;
+	border: none;
+	border-radius: 5px;
+	font-weight: bold;
+	font-size: 17px;
+	cursor: pointer;
+	transition: background 0.2s;
+}
+
+.edit-modal-btn:hover {
+	background: linear-gradient(90deg, #0056b3 60%, #009ec3 100%);
+}

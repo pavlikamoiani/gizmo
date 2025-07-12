@@ -7,16 +7,15 @@ $error = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_category'])) {
     $title = $_POST['title'] ?? '';
     $desc = $_POST['desc'] ?? '';
-    $subcategoriesArr = $_POST['subcategories'] ?? [];
-    $subcategories = implode(',', array_map('trim', $subcategoriesArr));
     $img = '';
 
-    // Handle image upload
+    // Обработка загрузки изображения
     if (isset($_FILES['img']) && $_FILES['img']['error'] === UPLOAD_ERR_OK) {
         $ext = pathinfo($_FILES['img']['name'], PATHINFO_EXTENSION);
         $imgName = uniqid('cat_', true) . '.' . $ext;
         $targetDir = $_SERVER['DOCUMENT_ROOT'] . '/gizmo/images/categories/';
-        if (!is_dir($targetDir)) mkdir($targetDir, 0777, true);
+        if (!is_dir($targetDir))
+            mkdir($targetDir, 0777, true);
         $targetFile = $targetDir . $imgName;
         if (move_uploaded_file($_FILES['img']['tmp_name'], $targetFile)) {
             $img = 'images/categories/' . $imgName;
@@ -26,12 +25,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_category'])) {
     }
 
     if (!$error) {
-        $stmt = $conn->prepare("INSERT INTO categories (title, `desc`, img, subcategories) VALUES (?, ?, ?, ?)");
-        $stmt->bind_param("ssss", $title, $desc, $img, $subcategories);
+        $stmt = $conn->prepare("INSERT INTO categories (title, `desc`, img) VALUES (?, ?, ?)");
+        $stmt->bind_param("sss", $title, $desc, $img);
         if ($stmt->execute()) {
             $success = "Category added!";
 
-            // --- Append to categories.js ---
+            // Добавление в categories.js
             $jsFile = __DIR__ . '/../../js/categories.js';
             $categoryObj = "\t\t{\n";
             $categoryObj .= "\t\t\ttitle: \"" . addslashes($title) . "\",\n";
@@ -50,7 +49,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_category'])) {
                 $newJsContent = $before . $newBody . $after . substr($jsContent, strpos($jsContent, $after) + strlen($after));
                 file_put_contents($jsFile, $newJsContent);
             }
-            // --- end append ---
+
+            header("Location: " . $_SERVER['PHP_SELF']);
+            exit;
         } else {
             $error = "DB error: " . $stmt->error;
         }
@@ -58,6 +59,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_category'])) {
     }
 }
 ?>
+
+<!-- МОДАЛЬНОЕ ОКНО -->
 <div id="addCategoryModal" class="modal">
     <div class="modal-content">
         <span id="closeAddCategoryModal" class="close">&times;</span>
@@ -67,49 +70,45 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_category'])) {
         <?php elseif ($error): ?>
             <div class="error"><?= htmlspecialchars($error) ?></div>
         <?php endif; ?>
-        <form method="post" enctype="multipart/form-data" class="add-category-form" id="addCategoryForm">
+        <form method="post" enctype="multipart/form-data" class="category-form" id="addCategoryForm">
             <label>Title*</label>
             <input type="text" name="title" required>
             <label>Description</label>
             <input type="text" name="desc" required>
             <label>Image</label>
             <input type="file" name="img" accept="image/*">
-            <label>Subcategories</label>
-            <div id="subcategories-wrapper">
-                <div class="subcategory-row">
-                    <input type="text" name="subcategories[]" placeholder="Subcategory">
-                    <button type="button" class="remove-subcategory" style="display:none;">&times;</button>
-                </div>
-            </div>
-            <button type="button" id="addSubcategoryBtn">Add Subcategory</button>
-            <button type="submit" name="add_category">Add Category</button>
+            <button type="submit" name="add_category" class="modal-btn">Add Category</button>
         </form>
     </div>
 </div>
+
+<!-- JS -->
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const wrapper = document.getElementById('subcategories-wrapper');
-    document.getElementById('addSubcategoryBtn').onclick = function() {
-        const row = document.createElement('div');
-        row.className = 'subcategory-row';
-        row.innerHTML = `<input type="text" name="subcategories[]" placeholder="Subcategory">
-                         <button type="button" class="remove-subcategory">&times;</button>`;
-        wrapper.appendChild(row);
-        updateRemoveBtns();
-    };
-    wrapper.addEventListener('click', function(e) {
-        if (e.target.classList.contains('remove-subcategory')) {
-            e.target.parentElement.remove();
-            updateRemoveBtns();
+    document.addEventListener('DOMContentLoaded', function () {
+        // Модальное окно
+        const modal = document.getElementById('addCategoryModal');
+        const closeModal = document.getElementById('closeAddCategoryModal');
+        const openModalBtn = document.getElementById('addCategoryBtn');
+
+        openModalBtn.onclick = () => modal.style.display = 'block';
+        closeModal.onclick = () => modal.style.display = 'none';
+        window.onclick = function (event) {
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        };
+
+        // Обновление кнопок удаления подкатегорий
+        function updateRemoveBtns() {
+            const rows = document.querySelectorAll('.subcategory-row');
+            rows.forEach((row) => {
+                const btn = row.querySelector('.remove-subcategory');
+                if (btn) {
+                    btn.style.display = rows.length > 1 ? 'inline-block' : 'none';
+                }
+            });
         }
+
+        updateRemoveBtns();
     });
-    function updateRemoveBtns() {
-        const rows = wrapper.querySelectorAll('.subcategory-row');
-        rows.forEach((row, idx) => {
-            const btn = row.querySelector('.remove-subcategory');
-            btn.style.display = rows.length > 1 ? 'inline-block' : 'none';
-        });
-    }
-    updateRemoveBtns();
-});
 </script>
