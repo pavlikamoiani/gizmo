@@ -40,12 +40,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
     <div class="login-box">
         <h2>Admin Login</h2>
-        <?php if ($error): ?>
-            <div class="error"><?= htmlspecialchars($error) ?></div>
-        <?php endif; ?>
         <form method="post">
             <input type="text" name="username" placeholder="Username" required autofocus>
             <input type="password" name="password" placeholder="Password" required>
+            <?php if ($error): ?>
+                <div class="error" style="padding: 5px 0;"><?= htmlspecialchars($error) ?></div>
+            <?php endif; ?>
             <button type="submit">Login</button>
         </form>
     </div>

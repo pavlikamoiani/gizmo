@@ -1,11 +1,14 @@
 body {
+	display: flex;
+	align-items: center;
+	justify-content: center;
 	font-family: Arial, sans-serif;
 	background: #f5f5f5;
+	min-height: 100vh;
 }
 
 .login-box {
 	max-width: 350px;
-	margin: 100px auto;
 	padding: 30px;
 	background: #fff;
 	border-radius: 8px;
@@ -45,4 +48,5 @@ body {
 	color: red;
 	text-align: center;
 	margin-bottom: 10px;
+	font-size: 16px;
 }

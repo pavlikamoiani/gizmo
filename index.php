@@ -52,7 +52,7 @@
 			<h1>ტექნიკის მაღაზია Gizmo</h1>
 		</section>
 		<section class="category">
-			<!-- კატეგორიები იქნებიან დამატებული JS-ის მეშვეობით -->
+		<?php include 'components/categories.php'; ?>
 		</section>
 		<div class="show-more-categories-wrap">
 			<button class="show-more-categories-btn">ყველა კატეგორია</button>
@@ -67,7 +67,6 @@
 	<?php include 'components/footer.php'; ?>
 	
 	<script src="js/slider.js"></script>
-	<script src="js/categories.js"></script>
 	<script src="js/products.js"></script>
 </body>
 
