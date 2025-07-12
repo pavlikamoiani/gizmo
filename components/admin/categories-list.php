@@ -36,8 +36,32 @@ if (isset($_POST['edit_category_id_modal'])) {
 	exit;
 }
 
+// Добавление подкатегории
+if (isset($_POST['add_subcategory']) && !empty($_POST['subcategory_title']) && !empty($_POST['subcategory_category_id'])) {
+	$cat_id = intval($_POST['subcategory_category_id']);
+	$sub_title = $conn->real_escape_string($_POST['subcategory_title']);
+	$conn->query("INSERT INTO subcategories (category_id, title) VALUES ($cat_id, '$sub_title')");
+	header("Location: " . strtok($_SERVER["REQUEST_URI"], '?'));
+	exit;
+}
+
+// Удаление подкатегории
+if (isset($_GET['delete_subcategory'])) {
+	$sub_id = intval($_GET['delete_subcategory']);
+	$conn->query("DELETE FROM subcategories WHERE id = $sub_id");
+	header("Location: " . strtok($_SERVER["REQUEST_URI"], '?'));
+	exit;
+}
+
 // Получение всех категорий
 $result = $conn->query("SELECT * FROM categories ORDER BY id DESC");
+
+// Получение всех подкатегорий
+$subcats = [];
+$subcat_result = $conn->query("SELECT * FROM subcategories");
+while ($row = $subcat_result->fetch_assoc()) {
+	$subcats[$row['category_id']][] = $row;
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -80,6 +104,23 @@ $result = $conn->query("SELECT * FROM categories ORDER BY id DESC");
 		</div>
 	</div>
 
+	<!-- Модальное окно для подкатегорий -->
+	<div id="subcategoriesModal" class="modal">
+		<div class="modal-content" style="max-width:400px;">
+			<span id="closeSubcategoriesModal" class="close">&times;</span>
+			<h2>Subcategories</h2>
+			<ul id="subcategoriesList" style="list-style:none;padding-left:0;margin:0 0 16px 0;"></ul>
+			<form method="post" id="addSubcategoryForm" style="display:flex;gap:6px;">
+				<input type="hidden" name="subcategory_category_id" id="subcategory_category_id_modal">
+				<input type="text" name="subcategory_title" id="subcategory_title_modal"
+					placeholder="Add subcategory..." required
+					style="flex:1;padding:6px 10px;border-radius:4px;border:1px solid #ccc;">
+				<button type="submit" name="add_subcategory" class="edit-btn"
+					style="min-width:unset;height:36px;padding:0 14px;font-size:14px;">Add</button>
+			</form>
+		</div>
+	</div>
+
 	<section id="categoriesSection" style="margin-top:40px;">
 		<h2>Categories</h2>
 		<table class="categories-table">
@@ -88,6 +129,7 @@ $result = $conn->query("SELECT * FROM categories ORDER BY id DESC");
 				<th>Title</th>
 				<th>Description</th>
 				<th>Image</th>
+				<th>Subcategories</th>
 				<th>Actions</th>
 			</tr>
 			<?php while ($row = $result->fetch_assoc()): ?>
@@ -99,6 +141,11 @@ $result = $conn->query("SELECT * FROM categories ORDER BY id DESC");
 						<?php if (!empty($row['img'])): ?>
 							<img src="/gizmo/<?= htmlspecialchars($row['img']) ?>" alt="cat-img">
 						<?php endif; ?>
+					</td>
+					<td>
+						<button type="button" class="edit-btn open-subcategories-btn" data-category-id="<?= $row['id'] ?>">
+							Subcategories
+						</button>
 					</td>
 					<td>
 						<button type="button" class="edit-btn" data-id="<?= $row['id'] ?>"
@@ -158,12 +205,52 @@ $result = $conn->query("SELECT * FROM categories ORDER BY id DESC");
 		closeEditModal.onclick = function () {
 			editModal.style.display = 'none';
 		};
+		// Subcategories modal logic
+		const subcats = <?php echo json_encode($subcats); ?>;
+		const subcategoriesModal = document.getElementById('subcategoriesModal');
+		const closeSubcategoriesModal = document.getElementById('closeSubcategoriesModal');
+		const subcategoriesList = document.getElementById('subcategoriesList');
+		const addSubcategoryForm = document.getElementById('addSubcategoryForm');
+		const subcategoryCategoryIdInput = document.getElementById('subcategory_category_id_modal');
+		const subcategoryTitleInput = document.getElementById('subcategory_title_modal');
+
+		document.querySelectorAll('.open-subcategories-btn').forEach(btn => {
+			btn.onclick = function () {
+				const catId = this.getAttribute('data-category-id');
+				subcategoryCategoryIdInput.value = catId;
+				subcategoryTitleInput.value = '';
+				// Render subcategories
+				subcategoriesList.innerHTML = '';
+				if (subcats[catId]) {
+					subcats[catId].forEach(sub => {
+						const li = document.createElement('li');
+						li.style.marginBottom = '4px';
+						li.innerHTML = `
+							${sub.title}
+							<a href="?delete_subcategory=${sub.id}" class="delete-link" style="padding:2px 8px;font-size:13px;" onclick="return confirm('Delete this subcategory?');">
+								<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" style="vertical-align:middle;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+									<path stroke-width="2" d="M6 7h12M9 7V5a3 3 0 0 1 6 0v2m2 0v12a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V7m3 4v6m4-6v6"/>
+								</svg>
+							</a>
+						`;
+						subcategoriesList.appendChild(li);
+					});
+				}
+				subcategoriesModal.style.display = 'flex';
+			};
+		});
+		closeSubcategoriesModal.onclick = function () {
+			subcategoriesModal.style.display = 'none';
+		};
 		window.onclick = function (event) {
+			if (event.target == subcategoriesModal) {
+				subcategoriesModal.style.display = 'none';
+			}
 			if (event.target == document.getElementById('addCategoryModal')) {
 				document.getElementById('addCategoryModal').style.display = 'none';
 			}
-			if (event.target == editModal) {
-				editModal.style.display = 'none';
+			if (event.target == document.getElementById('editCategoryModal')) {
+				document.getElementById('editCategoryModal').style.display = 'none';
 			}
 		};
 	</script>

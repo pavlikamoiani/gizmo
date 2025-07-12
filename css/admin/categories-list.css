@@ -33,7 +33,8 @@
 
 .edit-btn {
 	padding: 8px 22px 8px 14px;
-	background: linear-gradient(90deg, #4f8cff 60%, #38e0ff 100%);
+	background: #007bff;
+
 	color: #fff;
 	border: none;
 	border-radius: 6px;
@@ -46,14 +47,6 @@
 	gap: 6px;
 	box-shadow: 0 2px 8px #e0eaff;
 	transition: background 0.2s, box-shadow 0.2s, transform 0.15s;
-	border: 1.5px solid #4f8cff;
-}
-
-.edit-btn:hover {
-	background: linear-gradient(90deg, #2563eb 60%, #06b6d4 100%);
-	box-shadow: 0 4px 18px #b3e0ff66;
-	transform: translateY(-2px) scale(1.04);
-	border-color: #2563eb;
 }
 
 .delete-link {
@@ -71,13 +64,4 @@
 	gap: 6px;
 	box-shadow: 0 2px 8px #ffeaea;
 	transition: background 0.2s, box-shadow 0.2s, transform 0.15s;
-	border: 1.5px solid #ff4e4e;
-}
-
-.delete-link:hover {
-	background: linear-gradient(90deg, #d32f2f 60%, #ff7043 100%);
-	box-shadow: 0 4px 18px #ffd6d6;
-	transform: translateY(-2px) scale(1.04);
-	color: #fff;
-	border-color: #d32f2f;
 }
