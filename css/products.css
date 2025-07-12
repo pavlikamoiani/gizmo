@@ -3,52 +3,155 @@
 }
 
 .products h2 {
-	color: #4e92e5;
+	color: #fff;
 	margin-bottom: 36px;
-	font-size: 2.1rem;
+	font-size: 1.4rem;
 	letter-spacing: 0.01em;
 }
 
 .product-grid {
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-	gap: 36px;
+	grid-template-columns: repeat(5, 1fr);
+	gap: 20px;
 }
 
 .product-card {
-	background: #1a2740;
-	border-radius: 18px;
-	padding: 28px 18px;
-	text-align: center;
-	box-shadow: 0 2px 16px #4e92e520;
-	transition: transform 0.2s, box-shadow 0.2s;
-	border: 1px solid #4e92e522;
+	background: #fff;
+	border-radius: 10px;
+	padding: 12px 0 10px 0;
+	box-shadow: 0 2px 8px #0001;
+	transition: transform 0.18s, box-shadow 0.18s;
+	border: none;
+	position: relative;
+	overflow: visible;
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	align-items: stretch;
+	min-width: 0;
+	cursor: pointer;
 }
 
 .product-card:hover {
-	transform: translateY(-8px) scale(1.04);
-	box-shadow: 0 8px 32px #4e92e570;
-	border-color: #4e92e5;
+	transform: translateY(-2px) scale(1.01);
+	box-shadow: 0 6px 24px #0002;
+}
+
+/* Image wrapper for white background and centering */
+.product-card .img-wrap {
+	background: transparent;
+	border-radius: 0;
+	margin: 0 auto 0 auto;
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
 
 .product-card img {
-	width: 124px;
-	height: 124px;
+	width: 180px;
+	height: 180px;
 	object-fit: contain;
-	margin-bottom: 18px;
+	border-radius: 0;
+	background: transparent;
+	padding: 0;
+	margin: 0;
+	display: block;
 }
 
 .product-card h3 {
+	color: #222;
+	font-size: 1rem;
+	margin-bottom: 8px;
+	font-weight: 500;
+	text-align: left;
+	margin-left: 14px;
+	margin-top: 8px;
+}
+
+/* Discount badge */
+.discount-badge {
+	position: absolute;
+	top: 10px;
+	left: 10px;
+	background: #ff2d2d;
 	color: #fff;
-	font-size: 1.15rem;
-	margin-bottom: 10px;
+	font-size: 0.95rem;
+	font-weight: 700;
+	border-radius: 10px;
+	padding: 2px 10px;
+	z-index: 2;
+	box-shadow: 0 2px 8px #ff2d2d30;
+}
+
+/* Color options */
+.color-options {
+	display: flex;
+	gap: 6px;
+	margin-bottom: 8px;
+	margin-left: 14px;
+}
+
+.color-circle {
+	width: 16px;
+	height: 16px;
+	border-radius: 50%;
+	border: 1px solid #e3e3e3;
+	display: inline-block;
+	cursor: pointer;
+	box-shadow: 0 1px 2px #0001;
+}
+
+/* Price row */
+.price-row {
+	display: flex;
+	align-items: baseline;
+	gap: 8px;
+	margin-bottom: 4px;
+	margin-left: 14px;
+}
+
+.old-price {
+	color: #bfc2b7;
+	font-size: 0.92rem;
+	text-decoration: line-through;
 }
 
 .price {
-	color: #4e92e5;
-	font-size: 1.22rem;
-	margin-bottom: 14px;
+	color: #1976d2;
+	font-size: 1rem;
+	margin-bottom: 6px;
 	font-weight: 600;
+}
+
+/* Monthly payment */
+.monthly-payment {
+	color: #969696;
+	font-size: 0.92rem;
+	margin-bottom: 0;
+	margin-left: 14px;
+}
+
+/* Warranty badge */
+.warranty-badge {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	background: #f5f8ff;
+	border-radius: 10px;
+	padding: 4px 10px;
+	font-size: 0.95rem;
+	color: #4e92e5;
+	font-weight: 600;
+	margin: 0 auto 12px auto;
+	width: fit-content;
+	box-shadow: 0 1px 6px #4e92e520;
+}
+
+.warranty-badge img {
+	width: 22px;
+	height: 22px;
 }
 
 button {
