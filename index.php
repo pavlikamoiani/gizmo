@@ -17,9 +17,9 @@
 
 <body>
 	<!-- Brand bar section -->
-	<div class="brand-bar-placeholder"></div>
+	<?php include 'components/brand-bar.php'; ?>
 	<!-- Replace header with placeholder -->
-	<div id="header-placeholder"></div>
+	<?php include 'components/header.php'; ?>
 	<!-- Slider Section -->
 	<section class="custom-slider">
 		<div class="custom-slider-content">
@@ -66,7 +66,6 @@
 	
 	<script src="js/slider.js"></script>
 	<script src="js/categories.js"></script>
-	<script src="js/DynamicallyLoad.js"></script>
 	<script src="js/products.js"></script>
 </body>
 
