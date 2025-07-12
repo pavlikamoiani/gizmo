@@ -19,9 +19,7 @@
 	width: 100%;
 	max-width: 350px;
 	position: relative;
-	box-shadow: 0 2px 8px #ccc;
 	margin: 0;
-	/* убираем margin:auto, flex сам центрирует */
 }
 
 .close {
@@ -89,10 +87,7 @@
 	font-weight: bold;
 	cursor: pointer;
 	margin-bottom: 18px;
-}
-
-.add-category-btn:hover {
-	background: #0056b3;
+	font-size: 14px;
 }
 
 .subcategory-row {

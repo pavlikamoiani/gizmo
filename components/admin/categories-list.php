@@ -51,8 +51,11 @@ $result = $conn->query("SELECT * FROM categories ORDER BY id DESC");
 </head>
 
 <body>
+	<a href="../../admin/dashboard.php"
+		style="display:inline-block;margin:18px 0 18px 0;padding: 10px 18px ;background:#222;color:#fff;border-radius:4px;text-decoration:none; font-size: 14px; font-weight: bold;">Back
+		to Dashboard</a>
 	<!-- Кнопка и модалка добавления категории -->
-	<button id="openAddCategoryModal" class="add-category-btn" style="margin-bottom:20px;">Add Category</button>
+	<button id="openAddCategoryModal" class="add-category-btn">Add Category</button>
 	<?php include __DIR__ . '/add-categories.php'; ?>
 
 	<!-- Модальное окно для редактирования категории -->
@@ -79,7 +82,7 @@ $result = $conn->query("SELECT * FROM categories ORDER BY id DESC");
 
 	<section id="categoriesSection" style="margin-top:40px;">
 		<h2>Categories</h2>
-		<table border="1" cellpadding="8" cellspacing="0">
+		<table class="categories-table">
 			<tr>
 				<th>ID</th>
 				<th>Title</th>
@@ -94,8 +97,7 @@ $result = $conn->query("SELECT * FROM categories ORDER BY id DESC");
 					<td><?= htmlspecialchars($row['desc']) ?></td>
 					<td>
 						<?php if (!empty($row['img'])): ?>
-							<img src="/gizmo/<?= htmlspecialchars($row['img']) ?>" alt="cat-img"
-								style="max-width:60px;max-height:40px;border-radius:4px;">
+							<img src="/gizmo/<?= htmlspecialchars($row['img']) ?>" alt="cat-img">
 						<?php endif; ?>
 					</td>
 					<td>
@@ -103,10 +105,24 @@ $result = $conn->query("SELECT * FROM categories ORDER BY id DESC");
 							data-title="<?= htmlspecialchars($row['title'], ENT_QUOTES) ?>"
 							data-desc="<?= htmlspecialchars($row['desc'], ENT_QUOTES) ?>"
 							data-img="<?= htmlspecialchars($row['img'], ENT_QUOTES) ?>">
+							<!-- Edit icon -->
+							<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" style="vertical-align:middle;"
+								fill="none" viewBox="0 0 24 24" stroke="currentColor">
+								<path stroke-width="2"
+									d="M16.862 3.487a2.25 2.25 0 1 1 3.182 3.182l-11.25 11.25a2 2 0 0 1-.878.513l-4 1a1 1 0 0 1-1.213-1.213l1-4a2 2 0 0 1 .513-.878l11.25-11.25z" />
+							</svg>
 							Edit
 						</button>
-						<a href="?delete_category=<?= $row['id'] ?>"
-							onclick="return confirm('Delete this category?');">Delete</a>
+						<a href="?delete_category=<?= $row['id'] ?>" class="delete-link"
+							onclick="return confirm('Delete this category?');">
+							<!-- Delete icon -->
+							<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" style="vertical-align:middle;"
+								fill="none" viewBox="0 0 24 24" stroke="currentColor">
+								<path stroke-width="2"
+									d="M6 7h12M9 7V5a3 3 0 0 1 6 0v2m2 0v12a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V7m3 4v6m4-6v6" />
+							</svg>
+							Delete
+						</a>
 					</td>
 				</tr>
 			<?php endwhile; ?>
