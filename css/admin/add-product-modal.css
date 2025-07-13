@@ -6,29 +6,34 @@
 	z-index: 1000;
 	left: 0;
 	top: 0;
-	width: 100vw;
-	height: 100vh;
+	width: 100%;
+	height: 100%;
 	overflow: auto;
 	background: rgba(0, 0, 0, 0.4);
 }
 
 .modal-content {
 	background: #fff;
-	padding: 32px 44px 28px 44px;
-	border-radius: 10px;
+	padding: 30px 40px;
+	border-radius: 8px;
 	width: 100%;
-	max-width: 420px;
+	max-width: 350px;
 	position: relative;
 	margin: 0;
-	box-shadow: 0 4px 24px #bbb;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
+}
+
+.modal-content h2 {
+	text-align: center;
+	font-size: 2rem;
+	font-weight: bold;
+	margin-bottom: 18px;
 }
 
 .modal-content form {
 	width: 100%;
+	display: flex;
+	flex-direction: column;
+	gap: 0;
 }
 
 .close {
@@ -41,43 +46,21 @@
 	cursor: pointer;
 }
 
-.category-form label,
-.modal-content label {
+.product-form label {
 	display: block;
 	margin-top: 12px;
 	font-weight: 500;
 }
 
-.category-form input[type="text"],
-.category-form input[type="file"],
-.modal-content input[type="text"],
-.modal-content input[type="file"] {
+.product-form input[type="text"],
+.product-form input[type="file"],
+.product-form select {
 	width: 100%;
 	padding: 8px;
 	margin-top: 4px;
 	border: 1px solid #ccc;
 	border-radius: 4px;
 	box-sizing: border-box;
-}
-
-.modal-content select,
-.category-form select {
-	width: 100%;
-	padding: 10px;
-	margin-top: 4px;
-	border: 1.5px solid #cfd8dc;
-	border-radius: 5px;
-	box-sizing: border-box;
-	font-size: 16px;
-	background: #f9f9f9;
-	transition: border 0.2s;
-}
-
-.modal-content select:focus,
-.category-form select:focus {
-	border: 1.5px solid #007bff;
-	background: #fff;
-	outline: none;
 }
 
 .modal-btn {
@@ -96,4 +79,11 @@
 
 .modal-btn:hover {
 	background: linear-gradient(90deg, #0056b3 60%, #009ec3 100%);
+}
+
+@media (max-width: 600px) {
+	.modal-content {
+		max-width: 98vw;
+		padding: 18px 8px 18px 8px;
+	}
 }

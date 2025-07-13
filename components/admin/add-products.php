@@ -57,30 +57,40 @@ foreach ($subcategories as $sub) {
 <script>
 	const subcategoriesByCategory = <?= json_encode($subcatMap) ?>;
 </script>
-<form method="post" enctype="multipart/form-data" style="max-width:350px;">
-	<label>Title*</label>
-	<input type="text" name="title" required>
-	<label>Discount (optional)</label>
-	<input type="text" name="discount" placeholder="-24%">
-	<label>Image</label>
-	<input type="file" name="img" accept="image/*">
-	<label>Colors (comma separated, e.g. #111,#bfc2b7,#e3e3e3)</label>
-	<input type="text" name="colors" placeholder="#111,#bfc2b7,#e3e3e3">
-	<label>Old Price (optional)</label>
-	<input type="text" name="oldPrice" placeholder="2 799₾">
-	<label>Price*</label>
-	<input type="text" name="price" required placeholder="2 119₾">
-	<label>Monthly (optional)</label>
-	<input type="text" name="monthly" placeholder="თვეში 44.15₾-დან">
-	<label>Category*</label>
+<link rel="stylesheet" href="../../css/admin/add-product-modal.css">
+<form method="post" enctype="multipart/form-data" class="product-form" id="addProductForm" style="max-width:350px;">
+	<label for="title">Title*</label>
+	<input type="text" name="title" id="title" required>
+
+	<label for="discount">Discount (optional)</label>
+	<input type="text" name="discount" id="discount" placeholder="-24%">
+
+	<label for="img">Image</label>
+	<input type="file" name="img" id="img" accept="image/*">
+
+	<label for="colors">Colors <span style="font-weight:normal;font-size:13px;">(comma separated, e.g.
+			#111,#bfc2b7,#e3e3e3)</span></label>
+	<input type="text" name="colors" id="colors" placeholder="#111,#bfc2b7,#e3e3e3">
+
+	<label for="oldPrice">Old Price (optional)</label>
+	<input type="text" name="oldPrice" id="oldPrice" placeholder="2 799₾">
+
+	<label for="price">Price*</label>
+	<input type="text" name="price" id="price" required placeholder="2 119₾">
+
+	<label for="monthly">Monthly (optional)</label>
+	<input type="text" name="monthly" id="monthly" placeholder="თვეში 44.15₾-დან">
+
+	<label for="categorySelect">Category*</label>
 	<select name="category_id" id="categorySelect" required>
 		<option value="">Choose category</option>
 		<?php foreach ($categories as $cat): ?>
 			<option value="<?= $cat['id'] ?>"><?= htmlspecialchars($cat['title']) ?></option>
 		<?php endforeach; ?>
 	</select>
+
 	<div id="subcategoryWrap" style="display:none;">
-		<label>Subcategory (optional)</label>
+		<label for="subcategorySelect">Subcategory (optional)</label>
 		<select name="subcategory_id" id="subcategorySelect">
 			<option value="0">None</option>
 			<!-- options will be filled by JS -->

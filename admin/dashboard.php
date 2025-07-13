@@ -18,7 +18,7 @@ if (empty($_SESSION['admin_logged_in'])) {
     <button id="goToCategories" class="categories-btn"
         onclick="window.location.href='../components/admin/categories-list.php'">Categories</button>
     <button id="goToProducts" class="products-btn"
-        onclick="window.location.href='../components/admin/products.php'">Products</button>
+        onclick="window.location.href='../components/admin/products-list.php'">Products</button>
     <p><a href="logout.php">Logout</a></p>
 </body>
 
