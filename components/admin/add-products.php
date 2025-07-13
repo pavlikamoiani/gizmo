@@ -68,9 +68,13 @@ foreach ($subcategories as $sub) {
 	<label for="img">Image</label>
 	<input type="file" name="img" id="img" accept="image/*">
 
-	<label for="colors">Colors <span style="font-weight:normal;font-size:13px;">(comma separated, e.g.
-			#111,#bfc2b7,#e3e3e3)</span></label>
-	<input type="text" name="colors" id="colors" placeholder="#111,#bfc2b7,#e3e3e3">
+	<label for="colors">Colors</label>
+	<div id="colorsPickerWrap" style="margin-bottom:8px;">
+		<input type="color" id="colorInput" value="#111111" style="width:40px;height:32px;vertical-align:middle;">
+		<button type="button" id="addColorBtn" style="margin-left:8px;">Добавить цвет</button>
+	</div>
+	<div id="colorsPreview" style="margin-bottom:8px;"></div>
+	<input type="hidden" name="colors" id="colors" value="">
 
 	<label for="oldPrice">Old Price (optional)</label>
 	<input type="text" name="oldPrice" id="oldPrice" placeholder="2 799₾">
@@ -164,6 +168,33 @@ foreach ($subcategories as $sub) {
 			});
 		}
 	});
+
+	// Color picker logic
+	const colorsInput = document.getElementById('colors');
+	const colorInput = document.getElementById('colorInput');
+	const addColorBtn = document.getElementById('addColorBtn');
+	const colorsPreview = document.getElementById('colorsPreview');
+	let colorsArr = [];
+
+	function updateColorsField() {
+		colorsInput.value = colorsArr.join(',');
+		colorsPreview.innerHTML = colorsArr.map((color, idx) =>
+			`<span style="display:inline-block;width:22px;height:22px;border-radius:50%;background:${color};margin-right:4px;vertical-align:middle;border:1px solid #ccc;position:relative;">
+				<button type="button" onclick="removeColor(${idx})" style="position:absolute;top:-7px;right:-7px;background:#fff;border:1px solid #ccc;border-radius:50%;width:16px;height:16px;font-size:12px;line-height:14px;padding:0;cursor:pointer;">×</button>
+			</span>`
+		).join('');
+	}
+	window.removeColor = function (idx) {
+		colorsArr.splice(idx, 1);
+		updateColorsField();
+	};
+	addColorBtn.onclick = function () {
+		const color = colorInput.value;
+		if (!colorsArr.includes(color)) {
+			colorsArr.push(color);
+			updateColorsField();
+		}
+	};
 </script>
 <?php
 // Не закрываем соединение здесь, чтобы products.php мог использовать $conn

@@ -28,9 +28,13 @@ foreach ($subcategories as $sub) {
 	<input type="file" name="img" id="edit_img" accept="image/*">
 	<div id="edit_img_preview" style="margin:6px 0;"></div>
 
-	<label for="edit_colors">Colors <span style="font-weight:normal;font-size:13px;">(comma separated, e.g.
-			#111,#bfc2b7,#e3e3e3)</span></label>
-	<input type="text" name="colors" id="edit_colors" placeholder="#111,#bfc2b7,#e3e3e3">
+	<label for="edit_colors">Colors</label>
+	<div id="editColorsPickerWrap" style="margin-bottom:8px;">
+		<input type="color" id="editColorInput" value="#111111" style="width:40px;height:32px;vertical-align:middle;">
+		<button type="button" id="editAddColorBtn" style="margin-left:8px;">Добавить цвет</button>
+	</div>
+	<div id="editColorsPreview" style="margin-bottom:8px;"></div>
+	<input type="hidden" name="colors" id="edit_colors" value="">
 
 	<label for="edit_oldPrice">Old Price (optional)</label>
 	<input type="text" name="oldPrice" id="edit_oldPrice" placeholder="2 799₾">
@@ -126,12 +130,38 @@ foreach ($subcategories as $sub) {
 		}
 	});
 
+	// Color picker logic for edit
+	const editColorsInput = document.getElementById('edit_colors');
+	const editColorInput = document.getElementById('editColorInput');
+	const editAddColorBtn = document.getElementById('editAddColorBtn');
+	const editColorsPreview = document.getElementById('editColorsPreview');
+	let editColorsArr = [];
+
+	function updateEditColorsField() {
+		editColorsInput.value = editColorsArr.join(',');
+		editColorsPreview.innerHTML = editColorsArr.map((color, idx) =>
+			`<span style="display:inline-block;width:22px;height:22px;border-radius:50%;background:${color};margin-right:4px;vertical-align:middle;border:1px solid #ccc;position:relative;">
+				<button type="button" onclick="removeEditColor(${idx})" style="position:absolute;top:-7px;right:-7px;background:#fff;border:1px solid #ccc;border-radius:50%;width:16px;height:16px;font-size:12px;line-height:14px;padding:0;cursor:pointer;">×</button>
+			</span>`
+		).join('');
+	}
+	window.removeEditColor = function (idx) {
+		editColorsArr.splice(idx, 1);
+		updateEditColorsField();
+	};
+	editAddColorBtn.onclick = function () {
+		const color = editColorInput.value;
+		if (!editColorsArr.includes(color)) {
+			editColorsArr.push(color);
+			updateEditColorsField();
+		}
+	};
+
 	// Функция для заполнения формы редактирования
 	window.fillEditProductForm = function (data) {
 		document.getElementById('edit_id').value = data.id || '';
 		document.getElementById('edit_title').value = data.title || '';
 		document.getElementById('edit_discount').value = data.discount || '';
-		document.getElementById('edit_colors').value = data.colors || '';
 		document.getElementById('edit_oldPrice').value = data.oldprice || '';
 		document.getElementById('edit_price').value = data.price || '';
 		document.getElementById('edit_monthly').value = data.monthly || '';
@@ -156,5 +186,13 @@ foreach ($subcategories as $sub) {
 		// Превью изображения
 		const preview = document.getElementById('edit_img_preview');
 		preview.innerHTML = data.img ? `<img src="/gizmo/${data.img}" alt="prod-img" style="max-width:60px;">` : '';
+		// Colors
+		editColorsArr = [];
+		if (data.colors) {
+			data.colors.split(',').forEach(function (color) {
+				if (color.trim()) editColorsArr.push(color.trim());
+			});
+		}
+		updateEditColorsField();
 	};
 </script>
