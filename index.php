@@ -51,21 +51,23 @@
 		<section class="hero">
 			<h1>ტექნიკის მაღაზია Gizmo</h1>
 		</section>
-		<section class="category">
-		<?php include 'components/categories.php'; ?>
+		<section class="category" id="category">
+			<?php include 'components/categories.php'; ?>
 		</section>
 		<div class="show-more-categories-wrap">
 			<button class="show-more-categories-btn">ყველა კატეგორია</button>
 		</div>
 
-		<section class="products">
+		<section class="products" id="product">
 			<h2>პროდუქცია</h2>
 			<div class="product-grid"></div>
 		</section>
 	</main>
-	
-	<?php include 'components/footer.php'; ?>
-	
+
+	<div class="footer" id="contact">
+		<?php include 'components/footer.php'; ?>
+	</div>
+
 	<script src="js/slider.js"></script>
 	<script src="js/products.js"></script>
 </body>

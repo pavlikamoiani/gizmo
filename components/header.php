@@ -7,9 +7,9 @@
 		<nav>
 			<ul class="nav-list">
 				<li><a href="#">მთავარი</a></li>
-				<li><a href="#">პროდუქცია</a></li>
-				<li><a href="#">შესახებ</a></li>
-				<li><a href="#">კონტაქტი</a></li>
+				<li><a href="#product">პროდუქცია</a></li>
+				<li><a href="#category">კატეგორიები</a></li>
+				<li><a href="#contact">კონტაქტი</a></li>
 			</ul>
 		</nav>
 	</div>

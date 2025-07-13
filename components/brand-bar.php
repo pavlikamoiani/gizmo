@@ -7,10 +7,10 @@
 				<img src="images/samsung-logo.png" alt="samsung" class="brand-logo" />
 			</div> -->
 		<div class="brand-menu">
-			<span>% აქციები</span>
-			<span>✓ ეს შენ ბიზნესისთვის</span>
-			<span>📢 მნიშვნელოვანი ამბები</span>
-			<span>⦿ ეს ჩვენ შესახებ</span>
+			<a href="#">% აქციები</a>
+			<a href="#">✓ ეს შენ ბიზნესისთვის</a>
+			<a href="#">📢 მნიშვნელოვანი ამბები</a>
+			<a href="#contact">⦿ ეს ჩვენ შესახებ</a>
 		</div>
 	</div>
 </div>
