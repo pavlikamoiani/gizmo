@@ -14,7 +14,7 @@
 	<link rel="stylesheet" href="css/hero.css">
 	<link rel="stylesheet" href="css/footer.css">
 
-	<link rel="icon" href="images/gizmo-logo.png" type="image/x-icon">
+	<link rel="icon" href="images/gizmo-icon.png" type="image/x-icon">
 </head>
 
 <body>

@@ -197,5 +197,4 @@ foreach ($subcategories as $sub) {
 	};
 </script>
 <?php
-// Не закрываем соединение здесь, чтобы products.php мог использовать $conn
 ?>
