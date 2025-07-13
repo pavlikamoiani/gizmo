@@ -60,7 +60,7 @@
 
 		<section class="products" id="product">
 			<h2>პროდუქცია</h2>
-			<div class="product-grid"></div>
+			<?php include 'components/products.php'; ?>
 		</section>
 	</main>
 
@@ -69,7 +69,6 @@
 	</div>
 
 	<script src="js/slider.js"></script>
-	<script src="js/products.js"></script>
 </body>
 
 </html>

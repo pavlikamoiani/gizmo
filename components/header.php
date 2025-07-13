@@ -1,7 +1,7 @@
 <header>
 	<div class="container header-flex">
-		<a href="#" class="logo-flex">
-			<img src="./images/gizmo-logo.png" alt="Gizmo Logo" class="logo">
+		<a href="/gizmo/index.php" class="logo-flex">
+			<img src="/gizmo/images/gizmo-logo.png" alt="Gizmo Logo" class="logo">
 			<span class="logo-text"><span class="logo-circle"></span> Gizmo</span>
 		</a>
 		<nav>
