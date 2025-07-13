@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_product'])) {
 	$stmt->bind_param("sssssssii", $title, $discount, $img, $colors_str, $oldPrice, $price, $monthly, $category_id, $subcategory_id);
 	$stmt->execute();
 	$stmt->close();
-	header("Location: " . $_SERVER['PHP_SELF']);
+	header("Location: " . $_SERVER['REQUEST_URI']);
 	exit;
 }
 
