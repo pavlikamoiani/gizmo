@@ -31,7 +31,7 @@ foreach ($subcategories as $sub) {
 	<label for="edit_colors">Colors</label>
 	<div id="editColorsPickerWrap" style="margin-bottom:8px;">
 		<input type="color" id="editColorInput" value="#111111" style="width:40px;height:32px;vertical-align:middle;">
-		<button type="button" id="editAddColorBtn" style="margin-left:8px;">Добавить цвет</button>
+		<button type="button" id="editAddColorBtn" style="margin-left:8px;">add colors</button>
 	</div>
 	<div id="editColorsPreview" style="margin-bottom:8px;"></div>
 	<input type="hidden" name="colors" id="edit_colors" value="">

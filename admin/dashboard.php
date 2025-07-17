@@ -16,15 +16,93 @@ if (empty($_SESSION['admin_logged_in'])) {
 </head>
 
 <body class="dashboard-bg">
-    <div class="dashboard-container">
-        <h1 class="dashboard-title">Admin Dashboard</h1>
-        <div class="dashboard-btns">
-            <button id="goToCategories" class="dashboard-btn"
-                onclick="window.location.href='../components/admin/categories-list.php'">Categories</button>
-            <button id="goToProducts" class="dashboard-btn"
-                onclick="window.location.href='../components/admin/products-list.php'">Products</button>
-        </div>
-        <p class="dashboard-logout"><a href="logout.php">Logout</a></p>
+    <div class="admin-layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <span class="sidebar-logo">Gizmo <b>Admin</b></span>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="active"><a href="dashboard.php"><span class="sidebar-icon">🏠</span>Dashboard</a></li>
+                    <li>
+                        <a href="../components/admin/categories-list.php">
+                            <span class="sidebar-icon">📦</span>Categories
+                        </a>
+                    </li>
+                    <li>
+                        <a href="../components/admin/products-list.php">
+                            <span class="sidebar-icon">🛒</span>Products
+                        </a>
+                    </li>
+                    <li>
+                        <a href="export-excel.php">
+                            <span class="sidebar-icon">⬇️</span>Export Excel
+                        </a>
+                    </li>
+                    <li>
+                        <form id="importExcelFormSidebar" action="import-excel.php" method="post"
+                            enctype="multipart/form-data" style="display:inline;">
+                            <label for="excelFileSidebar" style="margin-bottom:0;display:inline-block;cursor:pointer;">
+                                <span class="sidebar-icon">⬆️</span>Import Excel
+                                <input type="file" id="excelFileSidebar" name="excelFile" accept=".xlsx,.xls"
+                                    style="display:none;"
+                                    onchange="document.getElementById('importExcelFormSidebar').submit();">
+                            </label>
+                        </form>
+                    </li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="logout.php" class="sidebar-logout">Logout</a>
+            </div>
+        </aside>
+        <main class="main-content">
+            <header class="main-header">
+                <h1>Dashboard</h1>
+                <div class="main-header-actions">
+                    <span class="main-header-user">Admin</span>
+                </div>
+            </header>
+
+            <div id="autoHideAlert" class="alert success-alert" style="display:none;">
+                <span class="alert-icon">✔️</span>
+                Welcome to your admin dashboard!
+            </div>
+            <script>
+                if (!sessionStorage.getItem('dashboardAlertShown')) {
+                    var alert = document.getElementById('autoHideAlert');
+                    if (alert) {
+                        alert.style.display = 'flex';
+                        setTimeout(function () {
+                            alert.style.display = 'none';
+                        }, 5000);
+                    }
+                    sessionStorage.setItem('dashboardAlertShown', '1');
+                }
+            </script>
+            <div class="dashboard-cards">
+                <div class="dashboard-card card-blue">
+                    <div class="card-title">10468</div>
+                    <div class="card-desc">Sub Categories</div>
+                    <div class="card-chart"></div>
+                </div>
+                <div class="dashboard-card card-cyan">
+                    <div class="card-title">450</div>
+                    <div class="card-desc">Products</div>
+                    <div class="card-chart"></div>
+                </div>
+                <div class="dashboard-card card-yellow">
+                    <div class="card-title">12</div>
+                    <div class="card-desc">Categories</div>
+                    <div class="card-chart"></div>
+                </div>
+                <div class="dashboard-card card-red">
+                    <div class="card-title">5</div>
+                    <div class="card-desc">Admins</div>
+                    <div class="card-chart"></div>
+                </div>
+            </div>
+        </main>
     </div>
 </body>
 

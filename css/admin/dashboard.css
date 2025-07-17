@@ -1,79 +1,309 @@
-.dashboard-bg {
-	min-height: 100vh;
-	background: linear-gradient(120deg, #e0e7ff 0%, #f8fafc 100%);
+* {
+	font-family: 'Inter', Arial, sans-serif;
+	box-sizing: border-box;
+}
+
+body,
+html {
+	height: 100%;
+	margin: 0;
+	padding: 0;
+	background: #f1f3f6;
+}
+
+.admin-layout {
 	display: flex;
-	align-items: center;
-	justify-content: center;
+	min-height: 100vh;
 }
 
-.dashboard-container {
-	background: #fff;
-	border-radius: 16px;
-	box-shadow: 0 8px 32px rgba(60, 72, 100, 0.12);
-	padding: 48px 36px 36px 36px;
-	min-width: 320px;
-	max-width: 400px;
-	width: 100%;
-	text-align: center;
-}
-
-.dashboard-title {
-	font-size: 2.2rem;
-	font-weight: 700;
-	color: #22223b;
-	margin-bottom: 32px;
-	letter-spacing: 1px;
-}
-
-.dashboard-btns {
+.sidebar {
+	width: 220px;
+	background: #23272b;
+	color: #fff;
 	display: flex;
 	flex-direction: column;
-	gap: 18px;
-	margin-bottom: 32px;
+	padding: 0;
 }
 
-.dashboard-btn {
-	padding: 14px 0;
-	font-size: 1.1rem;
+.sidebar-header {
+	padding: 28px 0 18px 0;
+	text-align: center;
+	font-size: 1.4rem;
+	font-weight: 700;
+	letter-spacing: 1px;
+	border-bottom: 1px solid #2d3238;
+}
+
+.sidebar-logo {
+	color: #fff;
+}
+
+.sidebar-nav {
+	flex: 1 1 auto;
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+}
+
+.sidebar-nav ul {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+
+}
+
+.sidebar-nav li {
+	padding: 16px 32px;
+	cursor: pointer;
+	font-size: 1.08rem;
+	display: flex;
+	transition: background 0.18s;
+}
+
+.sidebar-nav li a {
+	text-decoration: none;
+	color: #fff;
+}
+
+.sidebar-nav li.active,
+.sidebar-nav li:hover {
+	background: #1a1d21;
+	text-decoration: none;
+}
+
+.sidebar-icon {
+	margin-right: 12px;
+	font-size: 1.2em;
+}
+
+.sidebar-footer {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: 18px 0;
+	text-align: center;
+	border-top: 1px solid #2d3238;
+	margin-top: auto;
+}
+
+.sidebar-logout {
+	color: #ef4444;
+	text-decoration: none;
 	font-weight: 600;
-	border: none;
+	transition: color 0.18s;
+}
+
+.sidebar-logout:hover {
+	color: #fff;
+}
+
+.main-content {
+	flex: 1;
+	padding: 0 0 0 0;
+	display: flex;
+	flex-direction: column;
+}
+
+.main-header {
+	background: #fff;
+	padding: 22px 36px 18px 36px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	border-bottom: 1px solid #e5e7eb;
+}
+
+.main-header h1 {
+	margin: 0;
+	font-size: 1.5rem;
+	font-weight: 700;
+	color: #23272b;
+}
+
+.main-header-user {
+	font-size: 1.08rem;
+	color: #23272b;
+	font-weight: 600;
+}
+
+.alert {
+	margin: 28px 36px 0 36px;
+	padding: 14px 22px;
 	border-radius: 8px;
-	background: linear-gradient(90deg, #007bff 60%, #00c6ff 100%);
+	font-size: 1.08rem;
+	display: flex;
+	align-items: center;
+}
+
+.success-alert {
+	background: #e6f9ec;
+	color: #15803d;
+	border: 1px solid #bbf7d0;
+}
+
+.alert-icon {
+	margin-right: 10px;
+	font-size: 1.2em;
+}
+
+.dashboard-cards {
+	display: flex;
+	gap: 22px;
+	margin: 32px 36px 0 36px;
+}
+
+.dashboard-card {
+	flex: 1;
+	border-radius: 12px;
+	padding: 24px 18px 18px 24px;
+	color: #fff;
+	box-shadow: 0 2px 12px rgba(60, 72, 100, 0.10);
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	min-width: 0;
+}
+
+.card-blue {
+	background: linear-gradient(135deg, #2563eb 60%, #38bdf8 100%);
+}
+
+.card-cyan {
+	background: linear-gradient(135deg, #06b6d4 60%, #67e8f9 100%);
+}
+
+.card-yellow {
+	background: linear-gradient(135deg, #fbbf24 60%, #fde68a 100%);
+	color: #23272b;
+}
+
+.card-red {
+	background: linear-gradient(135deg, #ef4444 60%, #fca5a5 100%);
+}
+
+.card-title {
+	font-size: 2.1rem;
+	font-weight: 800;
+	margin-bottom: 6px;
+}
+
+.card-desc {
+	font-size: 1.08rem;
+	font-weight: 500;
+	opacity: 0.95;
+}
+
+.card-chart {
+	height: 30px;
+	margin-top: 12px;
+	background: rgba(255, 255, 255, 0.15);
+	border-radius: 6px;
+}
+
+.dashboard-actions {
+	margin: 36px 36px 0 36px;
+	display: flex;
+	gap: 18px;
+	flex-wrap: wrap;
+	align-items: center;
+}
+
+.dashboard-actions label.excel-btn {
+	margin-bottom: 0;
+}
+
+.dashboard-actions input[type="file"].excel-file-input {
+	display: none;
+}
+
+.dashboard-btn,
+.excel-btn {
+	padding: 14px 0;
+	font-size: 1.08rem;
+	font-weight: 700;
+	border: none;
+	border-radius: 10px;
+	background: linear-gradient(90deg, #2563eb 0%, #38bdf8 100%);
 	color: #fff;
 	cursor: pointer;
-	transition: background 0.2s, transform 0.1s;
-	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+	transition: background 0.18s, transform 0.12s, box-shadow 0.18s;
+	box-shadow: 0 2px 8px rgba(37, 99, 235, 0.10);
+	letter-spacing: 0.7px;
+	width: 170px;
 }
 
-.dashboard-btn:hover {
-	background: linear-gradient(90deg, #0056b3 60%, #009ec3 100%);
+.dashboard-btn:hover,
+.excel-btn:hover,
+.dashboard-btn:focus,
+.excel-btn:focus {
+	background: linear-gradient(90deg, #1e40af 0%, #0ea5e9 100%);
 	transform: translateY(-2px) scale(1.03);
+	box-shadow: 0 6px 22px rgba(37, 99, 235, 0.13);
+	outline: none;
 }
 
-.dashboard-logout {
-	margin-top: 18px;
+.excel-btn {
+	background: linear-gradient(90deg, #059669 0%, #34d399 100%);
 }
 
-.dashboard-logout a {
-	color: #e63946;
-	font-weight: 500;
-	text-decoration: none;
-	transition: color 0.2s;
+.excel-btn:hover,
+.excel-btn:focus {
+	background: linear-gradient(90deg, #047857 0%, #6ee7b7 100%);
 }
 
-.dashboard-logout a:hover {
-	color: #b5171e;
-	text-decoration: underline;
+.excel-file-input {
+	display: none;
 }
 
-@media (max-width: 500px) {
-	.dashboard-container {
-		padding: 24px 8px 24px 8px;
-		min-width: unset;
-		max-width: 98vw;
+@media (max-width: 900px) {
+	.dashboard-cards {
+		flex-direction: column;
+		gap: 18px;
 	}
 
-	.dashboard-title {
-		font-size: 1.4rem;
+	.dashboard-actions {
+		flex-direction: column;
+		gap: 12px;
+	}
+}
+
+@media (max-width: 700px) {
+	.admin-layout {
+		flex-direction: column;
+	}
+
+	.sidebar {
+		width: 100%;
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+		padding: 0 8px;
+	}
+
+	.sidebar-header,
+	.sidebar-footer {
+		display: none;
+	}
+
+	.sidebar-nav ul {
+		display: flex;
+		gap: 8px;
+	}
+
+	.sidebar-nav li {
+		padding: 12px 10px;
+		font-size: 1rem;
+	}
+
+	.main-content {
+		padding: 0;
+	}
+
+	.main-header,
+	.alert,
+	.dashboard-cards,
+	.dashboard-actions {
+		margin-left: 8px;
+		margin-right: 8px;
 	}
 }
