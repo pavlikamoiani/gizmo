@@ -219,6 +219,14 @@ if (isset($_POST['import_products']) && isset($_FILES['products_excel']) && $_FI
 		<?php endwhile; ?>
 	</table>
 
+	<div id="addProductModal" class="modal" style="display:none;">
+		<div class="modal-content">
+			<span class="close" id="closeAddProductModal">&times;</span>
+			<h2>Add Product</h2>
+			<?php include __DIR__ . '/add-products.php'; ?>
+		</div>
+	</div>
+
 	<div id="editProductModal" class="modal" style="display:none;">
 		<div class="modal-content">
 			<span class="close" id="closeEditProductModal">&times;</span>
