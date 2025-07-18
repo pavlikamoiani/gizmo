@@ -1,7 +1,6 @@
 <?php
 require_once __DIR__ . '/../../db/db.php';
 
-// Обработка редактирования продукта
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_product'])) {
 	$id = intval($_POST['id']);
 	$title = $_POST['title'] ?? '';
@@ -15,7 +14,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_product'])) {
 	if ($subcategory_id === 0)
 		$subcategory_id = null;
 
-	// Обработка изображения
 	$img = $_POST['current_img'] ?? '';
 	if (isset($_FILES['img']) && $_FILES['img']['error'] === UPLOAD_ERR_OK) {
 		$ext = pathinfo($_FILES['img']['name'], PATHINFO_EXTENSION);
@@ -37,17 +35,87 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_product'])) {
 	exit;
 }
 
-// Получение списка продуктов
 $products = $conn->query("SELECT p.*, c.title as category_title, s.title as subcategory_title
     FROM products p
     LEFT JOIN categories c ON p.category_id = c.id
     LEFT JOIN subcategories s ON p.subcategory_id = s.id
     ORDER BY p.id DESC");
 
-// Удаление продукта
 if (isset($_GET['delete_product'])) {
 	$id = intval($_GET['delete_product']);
 	$conn->query("DELETE FROM products WHERE id = $id");
+	header("Location: " . strtok($_SERVER["REQUEST_URI"], '?'));
+	exit;
+}
+
+if (isset($_POST['import_products']) && isset($_FILES['products_excel']) && $_FILES['products_excel']['error'] === UPLOAD_ERR_OK) {
+	require_once $_SERVER['DOCUMENT_ROOT'] . '/gizmo/vendor/autoload.php';
+	$excelFile = $_FILES['products_excel']['tmp_name'];
+	$spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($excelFile);
+	$sheet = $spreadsheet->getActiveSheet();
+	$added = [];
+	$updated = [];
+	foreach ($sheet->getRowIterator(2) as $row) {
+		$cellIterator = $row->getCellIterator();
+		$cellIterator->setIterateOnlyExistingCells(false);
+		$cells = [];
+		foreach ($cellIterator as $cell) {
+			$cells[] = $cell->getValue();
+		}
+		$title = $conn->real_escape_string($cells[0] ?? '');
+		$discount = $conn->real_escape_string($cells[1] ?? '');
+		$colors = $conn->real_escape_string($cells[2] ?? '');
+		$oldPrice = $conn->real_escape_string($cells[3] ?? '');
+		$price = $conn->real_escape_string($cells[4] ?? '');
+		$monthly = $conn->real_escape_string($cells[5] ?? '');
+		$category_title = $conn->real_escape_string($cells[6] ?? '');
+		$subcategory_title = $conn->real_escape_string($cells[7] ?? '');
+
+		if ($title && $category_title) {
+			$cat_res = $conn->query("SELECT id FROM categories WHERE title='$category_title' LIMIT 1");
+			if ($cat_res && $cat_res->num_rows > 0) {
+				$cat_row = $cat_res->fetch_assoc();
+				$category_id = $cat_row['id'];
+				$subcategory_id = null;
+				if ($subcategory_title) {
+					$sub_res = $conn->query("SELECT id FROM subcategories WHERE category_id=$category_id AND title='$subcategory_title' LIMIT 1");
+					if ($sub_res && $sub_res->num_rows > 0) {
+						$sub_row = $sub_res->fetch_assoc();
+						$subcategory_id = $sub_row['id'];
+					}
+				}
+				// Проверка на дубликат
+				if ($subcategory_id) {
+					$dup_res = $conn->query("SELECT id FROM products WHERE title='$title' AND category_id=$category_id AND subcategory_id=$subcategory_id LIMIT 1");
+				} else {
+					$dup_res = $conn->query("SELECT id FROM products WHERE title='$title' AND category_id=$category_id AND (subcategory_id IS NULL OR subcategory_id=0) LIMIT 1");
+				}
+				if ($dup_res && $dup_res->num_rows > 0) {
+					// Обновить существующий продукт
+					$dup_row = $dup_res->fetch_assoc();
+					$prod_id = $dup_row['id'];
+					$stmt = $conn->prepare("UPDATE products SET discount=?, colors=?, oldPrice=?, price=?, monthly=? WHERE id=?");
+					$stmt->bind_param("sssssi", $discount, $colors, $oldPrice, $price, $monthly, $prod_id);
+					$stmt->execute();
+					$stmt->close();
+					$updated[] = $title;
+				} else {
+					// Добавить новый продукт
+					$stmt = $conn->prepare("INSERT INTO products (title, discount, colors, oldPrice, price, monthly, category_id, subcategory_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+					$stmt->bind_param("ssssssii", $title, $discount, $colors, $oldPrice, $price, $monthly, $category_id, $subcategory_id);
+					$stmt->execute();
+					$stmt->close();
+					$added[] = $title;
+				}
+			}
+		}
+	}
+	$msg = '';
+	if ($added)
+		$msg .= 'Added: ' . implode(', ', $added) . '. ';
+	if ($updated)
+		$msg .= 'Updated: ' . implode(', ', $updated) . '. ';
+	$_SESSION['import_products_msg'] = $msg;
 	header("Location: " . strtok($_SERVER["REQUEST_URI"], '?'));
 	exit;
 }
@@ -63,18 +131,24 @@ if (isset($_GET['delete_product'])) {
 </head>
 
 <body>
-	<a href="../../admin/dashboard.php"
-		style="display:inline-block;margin:18px 0 18px 0;padding: 10px 18px ;background:#222;color:#fff;border-radius:4px;text-decoration:none; font-size: 14px; font-weight: bold;">Back
-		to Dashboard</a>
-	<button id="openAddProductModal" class="add-category-btn">Add Product</button>
-	<div id="addProductModal" class="modal" style="display:none;">
-		<div class="modal-content">
-			<span class="close" id="closeAddProductModal">&times;</span>
-			<h2>Add Product</h2>
-			<?php include __DIR__ . '/add-products.php'; ?>
-		</div>
+	<div style="display:flex;gap:12px;align-items:center;margin-top:20px;">
+		<a href="../../admin/dashboard.php" class="dashboard-btn">Back to Dashboard</a>
+		<button id="openAddProductModal" class="add-category-btn">Add Product</button>
+		<form method="post" enctype="multipart/form-data" style="display:inline;" id="importProductsForm">
+			<label for="products_excel" class="import-categories-btn">
+				Import Products
+				<input type="file" name="products_excel" id="products_excel" accept=".xlsx,.xls" style="display:none;"
+					onchange="document.getElementById('importProductsForm').submit();">
+			</label>
+			<input type="hidden" name="import_products" value="1">
+		</form>
 	</div>
-
+	<?php if (!empty($_SESSION['import_products_msg'])): ?>
+		<div style="background:#e0ffe0;color:#222;padding:10px 18px;border-radius:4px;margin-bottom:16px;font-size:15px;">
+			<?= htmlspecialchars($_SESSION['import_products_msg']) ?>
+		</div>
+		<?php unset($_SESSION['import_products_msg']); ?>
+	<?php endif; ?>
 	<h2 style="margin-top:40px;">Products</h2>
 	<table class="categories-table">
 		<tr>
@@ -124,7 +198,6 @@ if (isset($_GET['delete_product'])) {
 						data-monthly="<?= htmlspecialchars($row['monthly'], ENT_QUOTES) ?>"
 						data-category="<?= htmlspecialchars($row['category_id'], ENT_QUOTES) ?>"
 						data-subcategory="<?= htmlspecialchars($row['subcategory_id'], ENT_QUOTES) ?>">
-						<!-- Edit icon -->
 						<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" style="vertical-align:middle;"
 							fill="none" viewBox="0 0 24 24" stroke="currentColor">
 							<path stroke-width="2"
@@ -134,7 +207,6 @@ if (isset($_GET['delete_product'])) {
 					</button>
 					<a href="?delete_product=<?= $row['id'] ?>" class="delete-link"
 						onclick="return confirm('Delete this product?');">
-						<!-- Delete icon -->
 						<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" style="vertical-align:middle;"
 							fill="none" viewBox="0 0 24 24" stroke="currentColor">
 							<path stroke-width="2"
@@ -147,7 +219,6 @@ if (isset($_GET['delete_product'])) {
 		<?php endwhile; ?>
 	</table>
 
-	<!-- Модальное окно для редактирования продукта -->
 	<div id="editProductModal" class="modal" style="display:none;">
 		<div class="modal-content">
 			<span class="close" id="closeEditProductModal">&times;</span>
@@ -157,7 +228,6 @@ if (isset($_GET['delete_product'])) {
 	</div>
 
 	<script>
-		// Модальное окно для добавления продукта
 		const addProductModal = document.getElementById('addProductModal');
 		const openAddProductModalBtn = document.getElementById('openAddProductModal');
 		const closeAddProductModalBtn = document.getElementById('closeAddProductModal');
@@ -176,7 +246,6 @@ if (isset($_GET['delete_product'])) {
 			}
 		};
 
-		// Модальное окно для редактирования продукта
 		const editProductModal = document.getElementById('editProductModal');
 		const closeEditProductModalBtn = document.getElementById('closeEditProductModal');
 		closeEditProductModalBtn.onclick = function () {
@@ -184,7 +253,6 @@ if (isset($_GET['delete_product'])) {
 		};
 		document.querySelectorAll('.edit-btn').forEach(btn => {
 			btn.onclick = function () {
-				// Передайте значения в форму редактирования (реализуйте в edit-product.php)
 				window.fillEditProductForm && window.fillEditProductForm(this.dataset);
 				editProductModal.style.display = 'flex';
 			};

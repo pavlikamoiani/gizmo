@@ -7,12 +7,10 @@ if (empty($_SESSION['admin_logged_in'])) {
 
 require_once __DIR__ . '/../db/db.php';
 
-// DB connection and counts
 $categories_count = $conn->query("SELECT COUNT(*) FROM categories")->fetch_row()[0];
 $subcategories_count = $conn->query("SELECT COUNT(*) FROM subcategories")->fetch_row()[0];
 $products_count = $conn->query("SELECT COUNT(*) FROM products")->fetch_row()[0];
 
-// Check if admins table exists before querying
 $admins_count = 0;
 $check_admins = $conn->query("SHOW TABLES LIKE 'admins'");
 if ($check_admins && $check_admins->num_rows > 0) {
