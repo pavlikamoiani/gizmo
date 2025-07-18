@@ -4,6 +4,20 @@ if (empty($_SESSION['admin_logged_in'])) {
     header('Location: login.php');
     exit;
 }
+
+require_once __DIR__ . '/../db/db.php';
+
+// DB connection and counts
+$categories_count = $conn->query("SELECT COUNT(*) FROM categories")->fetch_row()[0];
+$subcategories_count = $conn->query("SELECT COUNT(*) FROM subcategories")->fetch_row()[0];
+$products_count = $conn->query("SELECT COUNT(*) FROM products")->fetch_row()[0];
+
+// Check if admins table exists before querying
+$admins_count = 0;
+$check_admins = $conn->query("SHOW TABLES LIKE 'admins'");
+if ($check_admins && $check_admins->num_rows > 0) {
+    $admins_count = $conn->query("SELECT COUNT(*) FROM admins")->fetch_row()[0];
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -39,17 +53,6 @@ if (empty($_SESSION['admin_logged_in'])) {
                             <span class="sidebar-icon">⬇️</span>Export Excel
                         </a>
                     </li>
-                    <li>
-                        <form id="importExcelFormSidebar" action="import-excel.php" method="post"
-                            enctype="multipart/form-data" style="display:inline;">
-                            <label for="excelFileSidebar" style="margin-bottom:0;display:inline-block;cursor:pointer;">
-                                <span class="sidebar-icon">⬆️</span>Import Excel
-                                <input type="file" id="excelFileSidebar" name="excelFile" accept=".xlsx,.xls"
-                                    style="display:none;"
-                                    onchange="document.getElementById('importExcelFormSidebar').submit();">
-                            </label>
-                        </form>
-                    </li>
                 </ul>
             </nav>
             <div class="sidebar-footer">
@@ -82,28 +85,29 @@ if (empty($_SESSION['admin_logged_in'])) {
             </script>
             <div class="dashboard-cards">
                 <div class="dashboard-card card-blue">
-                    <div class="card-title">10468</div>
+                    <div class="card-title"><?= $subcategories_count ?></div>
                     <div class="card-desc">Sub Categories</div>
                     <div class="card-chart"></div>
                 </div>
                 <div class="dashboard-card card-cyan">
-                    <div class="card-title">450</div>
+                    <div class="card-title"><?= $products_count ?></div>
                     <div class="card-desc">Products</div>
                     <div class="card-chart"></div>
                 </div>
                 <div class="dashboard-card card-yellow">
-                    <div class="card-title">12</div>
+                    <div class="card-title"><?= $categories_count ?></div>
                     <div class="card-desc">Categories</div>
                     <div class="card-chart"></div>
                 </div>
                 <div class="dashboard-card card-red">
-                    <div class="card-title">5</div>
+                    <div class="card-title"><?= $admins_count ?></div>
                     <div class="card-desc">Admins</div>
                     <div class="card-chart"></div>
                 </div>
             </div>
         </main>
     </div>
+    <?php $conn->close(); ?>
 </body>
 
 </html>

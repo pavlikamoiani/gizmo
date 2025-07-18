@@ -4,7 +4,6 @@ if ($conn->connect_error) {
 	die("Connection failed: " . $conn->connect_error);
 }
 
-// Удаление категории
 if (isset($_GET['delete_category'])) {
 	$id = intval($_GET['delete_category']);
 	$conn->query("DELETE FROM categories WHERE id = $id");
@@ -12,7 +11,6 @@ if (isset($_GET['delete_category'])) {
 	exit;
 }
 
-// Обновление категории
 if (isset($_POST['edit_category_id_modal'])) {
 	$id = intval($_POST['edit_category_id_modal']);
 	$title = $conn->real_escape_string($_POST['edit_category_title_modal']);
@@ -36,7 +34,6 @@ if (isset($_POST['edit_category_id_modal'])) {
 	exit;
 }
 
-// Добавление подкатегории
 if (isset($_POST['add_subcategory']) && !empty($_POST['subcategory_title']) && !empty($_POST['subcategory_category_id'])) {
 	$cat_id = intval($_POST['subcategory_category_id']);
 	$sub_title = $conn->real_escape_string($_POST['subcategory_title']);
@@ -45,7 +42,6 @@ if (isset($_POST['add_subcategory']) && !empty($_POST['subcategory_title']) && !
 	exit;
 }
 
-// Удаление подкатегории
 if (isset($_GET['delete_subcategory'])) {
 	$sub_id = intval($_GET['delete_subcategory']);
 	$conn->query("DELETE FROM subcategories WHERE id = $sub_id");
@@ -53,10 +49,61 @@ if (isset($_GET['delete_subcategory'])) {
 	exit;
 }
 
-// Получение всех категорий
+if (isset($_POST['import_categories']) && isset($_FILES['categories_excel']) && $_FILES['categories_excel']['error'] === UPLOAD_ERR_OK) {
+	require_once $_SERVER['DOCUMENT_ROOT'] . '/gizmo/vendor/autoload.php';
+	$excelFile = $_FILES['categories_excel']['tmp_name'];
+	$spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($excelFile);
+	$sheet = $spreadsheet->getActiveSheet();
+	$updated = [];
+	$added = [];
+	foreach ($sheet->getRowIterator(2) as $row) {
+		$cellIterator = $row->getCellIterator();
+		$cellIterator->setIterateOnlyExistingCells(false);
+		$cells = [];
+		foreach ($cellIterator as $cell) {
+			$cells[] = $cell->getValue();
+		}
+		$title = $conn->real_escape_string($cells[0] ?? '');
+		$desc = $conn->real_escape_string($cells[1] ?? '');
+		$subs = $cells[2] ?? '';
+		if ($title) {
+			$cat_res = $conn->query("SELECT id FROM categories WHERE title='$title' LIMIT 1");
+			if ($cat_res && $cat_res->num_rows > 0) {
+				$cat_row = $cat_res->fetch_assoc();
+				$cat_id = $cat_row['id'];
+				$conn->query("UPDATE categories SET `desc`='$desc' WHERE id=$cat_id");
+				$updated[] = $title;
+			} else {
+				$conn->query("INSERT INTO categories (title, `desc`) VALUES ('$title', '$desc')");
+				$cat_id = $conn->insert_id;
+				$added[] = $title;
+			}
+			if ($subs) {
+				$subsArr = array_map('trim', explode(',', $subs));
+				foreach ($subsArr as $subTitle) {
+					if ($subTitle) {
+						$subTitleEsc = $conn->real_escape_string($subTitle);
+						$sub_res = $conn->query("SELECT id FROM subcategories WHERE category_id=$cat_id AND title='$subTitleEsc' LIMIT 1");
+						if ($sub_res && $sub_res->num_rows == 0) {
+							$conn->query("INSERT INTO subcategories (category_id, title) VALUES ($cat_id, '$subTitleEsc')");
+						}
+					}
+				}
+			}
+		}
+	}
+	$msg = '';
+	if ($added)
+		$msg .= 'Added: ' . implode(', ', $added) . '. ';
+	if ($updated)
+		$msg .= 'Updated: ' . implode(', ', $updated) . '. ';
+	$_SESSION['import_msg'] = $msg;
+	header("Location: " . strtok($_SERVER["REQUEST_URI"], '?'));
+	exit;
+}
+
 $result = $conn->query("SELECT * FROM categories ORDER BY id DESC");
 
-// Получение всех подкатегорий
 $subcats = [];
 $subcat_result = $conn->query("SELECT * FROM subcategories");
 while ($row = $subcat_result->fetch_assoc()) {
@@ -75,14 +122,26 @@ while ($row = $subcat_result->fetch_assoc()) {
 </head>
 
 <body>
-	<a href="../../admin/dashboard.php"
-		style="display:inline-block;margin:18px 0 18px 0;padding: 10px 18px ;background:#222;color:#fff;border-radius:4px;text-decoration:none; font-size: 14px; font-weight: bold;">Back
-		to Dashboard</a>
-	<!-- Кнопка и модалка добавления категории -->
-	<button id="openAddCategoryModal" class="add-category-btn">Add Category</button>
+	<div style="display:flex;gap:12px;align-items:center; margin-top:20px;">
+		<a href="../../admin/dashboard.php" class="dashboard-btn">Back to Dashboard</a>
+		<button id="openAddCategoryModal" class="add-category-btn">Add Category</button>
+		<form method="post" enctype="multipart/form-data" style="display:inline;" id="importCategoriesForm">
+			<label for="categories_excel" class="import-categories-btn">
+				Import Categories
+				<input type="file" name="categories_excel" id="categories_excel" accept=".xlsx,.xls"
+					style="display:none;" onchange="document.getElementById('importCategoriesForm').submit();">
+			</label>
+			<input type="hidden" name="import_categories" value="1">
+		</form>
+	</div>
+	<?php if (!empty($_SESSION['import_msg'])): ?>
+		<div style="background:#e0ffe0;color:#222;padding:10px 18px;border-radius:4px;margin-bottom:16px;font-size:15px;">
+			<?= htmlspecialchars($_SESSION['import_msg']) ?>
+		</div>
+		<?php unset($_SESSION['import_msg']); ?>
+	<?php endif; ?>
 	<?php include __DIR__ . '/add-categories.php'; ?>
 
-	<!-- Модальное окно для редактирования категории -->
 	<div id="editCategoryModal" class="modal">
 		<div class="modal-content">
 			<span id="closeEditCategoryModal" class="close">&times;</span>
@@ -104,7 +163,6 @@ while ($row = $subcat_result->fetch_assoc()) {
 		</div>
 	</div>
 
-	<!-- Модальное окно для подкатегорий -->
 	<div id="subcategoriesModal" class="modal">
 		<div class="modal-content" style="max-width:400px;">
 			<span id="closeSubcategoriesModal" class="close">&times;</span>
@@ -152,7 +210,6 @@ while ($row = $subcat_result->fetch_assoc()) {
 							data-title="<?= htmlspecialchars($row['title'], ENT_QUOTES) ?>"
 							data-desc="<?= htmlspecialchars($row['desc'], ENT_QUOTES) ?>"
 							data-img="<?= htmlspecialchars($row['img'], ENT_QUOTES) ?>">
-							<!-- Edit icon -->
 							<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" style="vertical-align:middle;"
 								fill="none" viewBox="0 0 24 24" stroke="currentColor">
 								<path stroke-width="2"
@@ -162,7 +219,6 @@ while ($row = $subcat_result->fetch_assoc()) {
 						</button>
 						<a href="?delete_category=<?= $row['id'] ?>" class="delete-link"
 							onclick="return confirm('Delete this category?');">
-							<!-- Delete icon -->
 							<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" style="vertical-align:middle;"
 								fill="none" viewBox="0 0 24 24" stroke="currentColor">
 								<path stroke-width="2"
@@ -176,14 +232,12 @@ while ($row = $subcat_result->fetch_assoc()) {
 		</table>
 	</section>
 	<script>
-		// Add Category Modal
 		document.getElementById('openAddCategoryModal').onclick = function () {
 			document.getElementById('addCategoryModal').style.display = 'block';
 		};
 		document.getElementById('closeAddCategoryModal').onclick = function () {
 			document.getElementById('addCategoryModal').style.display = 'none';
 		};
-		// Edit Category Modal
 		const editModal = document.getElementById('editCategoryModal');
 		const closeEditModal = document.getElementById('closeEditCategoryModal');
 		document.querySelectorAll('.edit-btn').forEach(btn => {
@@ -205,7 +259,6 @@ while ($row = $subcat_result->fetch_assoc()) {
 		closeEditModal.onclick = function () {
 			editModal.style.display = 'none';
 		};
-		// Subcategories modal logic
 		const subcats = <?php echo json_encode($subcats); ?>;
 		const subcategoriesModal = document.getElementById('subcategoriesModal');
 		const closeSubcategoriesModal = document.getElementById('closeSubcategoriesModal');
@@ -219,7 +272,6 @@ while ($row = $subcat_result->fetch_assoc()) {
 				const catId = this.getAttribute('data-category-id');
 				subcategoryCategoryIdInput.value = catId;
 				subcategoryTitleInput.value = '';
-				// Render subcategories
 				subcategoriesList.innerHTML = '';
 				if (subcats[catId]) {
 					subcats[catId].forEach(sub => {
