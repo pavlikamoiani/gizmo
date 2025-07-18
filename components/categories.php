@@ -9,8 +9,7 @@ if ($result && $result->num_rows > 0) {
             <div class="category-info">
                 <div class="category-title"><?= htmlspecialchars($row['title']) ?></div>
                 <div class="category-desc"><?= htmlspecialchars($row['desc']) ?></div>
-                <a class="category-btn"
-                    href="components/category-products.php?category=<?= urlencode($row['title']) ?>">სრულად</a>
+                <a class="category-btn" href="components/category-view.php?category=<?= urlencode($row['title']) ?>">სრულად</a>
             </div>
             <img class="category-img" src="<?= htmlspecialchars($row['img']) ?>" alt="<?= htmlspecialchars($row['title']) ?>">
         </div>
