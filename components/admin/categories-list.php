@@ -124,7 +124,12 @@ while ($row = $subcat_result->fetch_assoc()) {
 	<link rel="stylesheet" href="../../css/admin/categories-list.css">
 	<link rel="stylesheet" href="../../css/admin/edit-category-modal.css">
 	<style>
-		body, table, input, button, .category-form, .modal-content {
+		body,
+		table,
+		input,
+		button,
+		.category-form,
+		.modal-content {
 			font-family: 'Inter', Arial, sans-serif;
 		}
 	</style>

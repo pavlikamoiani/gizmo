@@ -82,7 +82,6 @@ $sub_stmt->close();
 			<?php endif; ?>
 			<div id="productsGrid" class="product-grid">
 				<?php
-				// Show all products for this category by default
 				$stmt = $conn->prepare("SELECT * FROM products WHERE category_id = ? ORDER BY id DESC");
 				$stmt->bind_param("i", $cat_id);
 				$stmt->execute();

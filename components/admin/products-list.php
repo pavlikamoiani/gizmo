@@ -134,6 +134,11 @@ if (isset($_POST['import_products']) && isset($_FILES['products_excel']) && $_FI
 	<title>Products List</title>
 	<link rel="stylesheet" href="../../css/admin/add-categories.css">
 	<link rel="stylesheet" href="../../css/admin/categories-list.css">
+	<style>
+		body {
+			font-family: 'Inter', Arial, sans-serif;
+		}
+	</style>
 </head>
 
 <body>
