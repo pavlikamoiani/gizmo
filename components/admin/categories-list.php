@@ -116,9 +116,18 @@ while ($row = $subcat_result->fetch_assoc()) {
 <head>
 	<meta charset="UTF-8">
 	<title>Categories</title>
+	<!-- Add Google Fonts (Inter as example) -->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
 	<link rel="stylesheet" href="../../css/admin/add-categories.css">
 	<link rel="stylesheet" href="../../css/admin/categories-list.css">
 	<link rel="stylesheet" href="../../css/admin/edit-category-modal.css">
+	<style>
+		body, table, input, button, .category-form, .modal-content {
+			font-family: 'Inter', Arial, sans-serif;
+		}
+	</style>
 </head>
 
 <body>
@@ -276,11 +285,19 @@ while ($row = $subcat_result->fetch_assoc()) {
 				if (subcats[catId]) {
 					subcats[catId].forEach(sub => {
 						const li = document.createElement('li');
-						li.style.marginBottom = '4px';
+						li.style.marginBottom = '16px';
+						li.style.display = 'flex';
+						li.style.alignItems = 'center';
+						li.style.fontSize = '1.15rem';
+						li.style.fontWeight = '500';
+						li.style.background = '#f5f5f5';
+						li.style.borderRadius = '8px';
+						li.style.padding = '0px 16px';
+						li.style.boxShadow = '0 1px 6px #0001';
 						li.innerHTML = `
-							${sub.title}
-							<a href="?delete_subcategory=${sub.id}" class="delete-link" style="padding:2px 8px;font-size:13px;" onclick="return confirm('Delete this subcategory?');">
-								<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" style="vertical-align:middle;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+							<span style="flex:1;display:block;text-align:left;">${sub.title}</span>
+							<a href="?delete_subcategory=${sub.id}" class="delete-link" style="padding:6px 14px;font-size:18px;display:inline-flex;align-items:center;margin-left:10px;background:#ff4e4e;border-radius:6px;color:#fff;" onclick="return confirm('Delete this subcategory?');">
+								<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" style="vertical-align:middle;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 									<path stroke-width="2" d="M6 7h12M9 7V5a3 3 0 0 1 6 0v2m2 0v12a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V7m3 4v6m4-6v6"/>
 								</svg>
 							</a>
