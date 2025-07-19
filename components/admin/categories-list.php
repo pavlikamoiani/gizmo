@@ -1,4 +1,5 @@
 <?php
+session_start();
 $conn = new mysqli('localhost', 'root', '', 'gizmo');
 if ($conn->connect_error) {
 	die("Connection failed: " . $conn->connect_error);
@@ -102,6 +103,34 @@ if (isset($_POST['import_categories']) && isset($_FILES['categories_excel']) && 
 	exit;
 }
 
+if (isset($_GET['export_categories'])) {
+	require_once $_SERVER['DOCUMENT_ROOT'] . '/gizmo/vendor/autoload.php';
+	$spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+	$sheet = $spreadsheet->getActiveSheet();
+	$sheet->setCellValue('A1', 'Title');
+	$sheet->setCellValue('B1', 'Description');
+	$sheet->setCellValue('C1', 'Subcategories');
+
+	$res = $conn->query("SELECT * FROM categories ORDER BY id DESC");
+	$rowNum = 2;
+	while ($cat = $res->fetch_assoc()) {
+		$sheet->setCellValue('A' . $rowNum, $cat['title']);
+		$sheet->setCellValue('B' . $rowNum, $cat['desc']);
+		$subsArr = [];
+		$subsRes = $conn->query("SELECT title FROM subcategories WHERE category_id=" . intval($cat['id']));
+		while ($sub = $subsRes->fetch_assoc()) {
+			$subsArr[] = $sub['title'];
+		}
+		$sheet->setCellValue('C' . $rowNum, implode(', ', $subsArr));
+		$rowNum++;
+	}
+	header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+	header('Content-Disposition: attachment; filename="categories_export.xlsx"');
+	$writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+	$writer->save('php://output');
+	exit;
+}
+
 $result = $conn->query("SELECT * FROM categories ORDER BY id DESC");
 
 $subcats = [];
@@ -136,7 +165,7 @@ while ($row = $subcat_result->fetch_assoc()) {
 </head>
 
 <body>
-	<div style="display:flex;gap:12px;align-items:center; margin-top:20px;">
+	<div class="dashboard-btn-container">
 		<a href="../../admin/dashboard.php" class="dashboard-btn">Back to Dashboard</a>
 		<button id="openAddCategoryModal" class="add-category-btn">Add Category</button>
 		<form method="post" enctype="multipart/form-data" style="display:inline;" id="importCategoriesForm">
@@ -147,9 +176,12 @@ while ($row = $subcat_result->fetch_assoc()) {
 			</label>
 			<input type="hidden" name="import_categories" value="1">
 		</form>
+		<a href="?export_categories=1" class="export-categories-btn">
+			Export Categories
+		</a>
 	</div>
 	<?php if (!empty($_SESSION['import_msg'])): ?>
-		<div style="background:#e0ffe0;color:#222;padding:10px 18px;border-radius:4px;margin-bottom:16px;font-size:15px;">
+		<div class="import-msg">
 			<?= htmlspecialchars($_SESSION['import_msg']) ?>
 		</div>
 		<?php unset($_SESSION['import_msg']); ?>
@@ -168,9 +200,8 @@ while ($row = $subcat_result->fetch_assoc()) {
 				<input type="text" name="edit_category_desc_modal" id="edit_category_desc_modal" required>
 				<label>Image</label>
 				<input type="file" name="edit_category_img_modal" id="edit_category_img_modal" accept="image/*">
-				<div id="currentImgWrap" style="margin:10px 0;">
-					<img id="currentImg" src="" alt="Current Image"
-						style="max-width:100px;max-height:60px;display:none;border-radius:6px;">
+				<div id="currentImgWrap" class="current-img-wrap">
+					<img id="currentImg" class="current-img" src="" alt="Current Image">
 				</div>
 				<button type="submit" class="modal-btn">Save Changes</button>
 			</form>
@@ -178,22 +209,19 @@ while ($row = $subcat_result->fetch_assoc()) {
 	</div>
 
 	<div id="subcategoriesModal" class="modal">
-		<div class="modal-content" style="max-width:400px;">
+		<div class="modal-content subcategories-modal-content">
 			<span id="closeSubcategoriesModal" class="close">&times;</span>
-			<h2>Subcategories</h2>
-			<ul id="subcategoriesList" style="list-style:none;padding-left:0;margin:0 0 16px 0;"></ul>
-			<form method="post" id="addSubcategoryForm" style="display:flex;gap:6px;">
+			<ul id="subcategoriesList" class="subcategories-list"></ul>
+			<form method="post" id="addSubcategoryForm" class="add-subcategory-form">
 				<input type="hidden" name="subcategory_category_id" id="subcategory_category_id_modal">
 				<input type="text" name="subcategory_title" id="subcategory_title_modal"
-					placeholder="Add subcategory..." required
-					style="flex:1;padding:6px 10px;border-radius:4px;border:1px solid #ccc;">
-				<button type="submit" name="add_subcategory" class="edit-btn"
-					style="min-width:unset;height:36px;padding:0 14px;font-size:14px;">Add</button>
+					placeholder="Add subcategory..." required class="add-subcategory-input">
+				<button type="submit" name="add_subcategory" class="edit-btn add-subcategory-btn">Add</button>
 			</form>
 		</div>
 	</div>
 
-	<section id="categoriesSection" style="margin-top:40px;">
+	<section id="categoriesSection" class="categories-section">
 		<h2>Categories</h2>
 		<table class="categories-table">
 			<tr>
@@ -290,18 +318,10 @@ while ($row = $subcat_result->fetch_assoc()) {
 				if (subcats[catId]) {
 					subcats[catId].forEach(sub => {
 						const li = document.createElement('li');
-						li.style.marginBottom = '16px';
-						li.style.display = 'flex';
-						li.style.alignItems = 'center';
-						li.style.fontSize = '1.15rem';
-						li.style.fontWeight = '500';
-						li.style.background = '#f5f5f5';
-						li.style.borderRadius = '8px';
-						li.style.padding = '0px 16px';
-						li.style.boxShadow = '0 1px 6px #0001';
+						li.className = 'subcategory-list-item';
 						li.innerHTML = `
-							<span style="flex:1;display:block;text-align:left;">${sub.title}</span>
-							<a href="?delete_subcategory=${sub.id}" class="delete-link" style="padding:6px 14px;font-size:18px;display:inline-flex;align-items:center;margin-left:10px;background:#ff4e4e;border-radius:6px;color:#fff;" onclick="return confirm('Delete this subcategory?');">
+							<span class="subcategory-name">${sub.title}</span>
+							<a href="?delete_subcategory=${sub.id}" class="delete-link subcategory-delete-link" onclick="return confirm('Delete this subcategory?');">
 								<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" style="vertical-align:middle;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 									<path stroke-width="2" d="M6 7h12M9 7V5a3 3 0 0 1 6 0v2m2 0v12a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V7m3 4v6m4-6v6"/>
 								</svg>
