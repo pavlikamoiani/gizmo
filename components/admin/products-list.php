@@ -153,6 +153,9 @@ if (isset($_POST['import_products']) && isset($_FILES['products_excel']) && $_FI
 			</label>
 			<input type="hidden" name="import_products" value="1">
 		</form>
+		<a href="../../admin/export-products.php" class="export-categories-btn">
+			Export Products
+		</a>
 	</div>
 	<?php if (!empty($_SESSION['import_products_msg'])): ?>
 		<div style="background:#e0ffe0;color:#222;padding:10px 18px;border-radius:4px;margin-bottom:16px;font-size:15px;">
