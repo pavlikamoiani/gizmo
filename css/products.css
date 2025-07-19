@@ -30,6 +30,9 @@
 	align-items: stretch;
 	min-width: 0;
 	cursor: pointer;
+	height: 370px;
+	/* Fixed height for all cards */
+	max-height: 370px;
 }
 
 .product-card:hover {
@@ -39,24 +42,28 @@
 
 /* Image wrapper for white background and centering */
 .product-card .img-wrap {
-	background: transparent;
-	border-radius: 0;
+	background: #f5f5f5;
+	border-radius: 8px;
 	margin: 0 auto 0 auto;
-	width: 100%;
+	width: 200px;
+	height: 200px;
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	overflow: hidden;
+	box-sizing: border-box;
 }
 
+/* Make all product images fill the square area and be centered */
 .product-card img {
-	width: 180px;
-	height: 180px;
-	object-fit: contain;
-	border-radius: 0;
-	background: transparent;
-	padding: 0;
-	margin: 0;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	border-radius: 8px;
+	background: #f5f5f5;
 	display: block;
+	box-shadow: 0 1px 6px #0001;
+	margin: 0;
 }
 
 .product-card h3 {
@@ -167,8 +174,48 @@ button {
 	box-shadow: 0 2px 8px #4e92e540;
 }
 
+
 button:hover {
 	background: #fff;
 	color: #4e92e5;
 	box-shadow: 0 4px 16px #4e92e570;
+}
+
+/* Responsive: adjust card height for mobile */
+@media (max-width: 900px) {
+	.product-card {
+		height: 320px;
+		max-height: 320px;
+	}
+
+	.product-card .img-wrap {
+		width: 120px;
+		height: 120px;
+	}
+
+	.product-card img {
+		width: 100%;
+		height: 100%;
+	}
+}
+
+@media (max-width: 700px) {
+	.product-grid {
+		grid-template-columns: repeat(2, 1fr);
+	}
+
+	.product-card {
+		height: 270px;
+		max-height: 270px;
+	}
+
+	.product-card .img-wrap {
+		width: 90px;
+		height: 90px;
+	}
+
+	.product-card img {
+		width: 100%;
+		height: 100%;
+	}
 }

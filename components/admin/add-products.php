@@ -20,18 +20,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_product'])) {
 		$subcategory_id = null;
 	}
 
-	// Загрузка изображения
-	if (isset($_FILES['img']) && $_FILES['img']['error'] === UPLOAD_ERR_OK) {
-		$ext = pathinfo($_FILES['img']['name'], PATHINFO_EXTENSION);
-		$imgName = uniqid('prod_', true) . '.' . $ext;
-		$targetDir = $_SERVER['DOCUMENT_ROOT'] . '/gizmo/images/products/';
-		if (!is_dir($targetDir))
-			mkdir($targetDir, 0777, true);
-		$targetFile = $targetDir . $imgName;
-		if (move_uploaded_file($_FILES['img']['tmp_name'], $targetFile)) {
-			$img = 'images/products/' . $imgName;
+	// Загрузка изображений
+	$imgArr = [];
+	if (isset($_FILES['img']) && !empty($_FILES['img']['name'][0])) {
+		foreach ($_FILES['img']['name'] as $i => $name) {
+			if ($_FILES['img']['error'][$i] === UPLOAD_ERR_OK) {
+				$ext = pathinfo($name, PATHINFO_EXTENSION);
+				$imgName = uniqid('prod_', true) . '.' . $ext;
+				$targetDir = $_SERVER['DOCUMENT_ROOT'] . '/gizmo/images/products/';
+				if (!is_dir($targetDir))
+					mkdir($targetDir, 0777, true);
+				$targetFile = $targetDir . $imgName;
+				if (move_uploaded_file($_FILES['img']['tmp_name'][$i], $targetFile)) {
+					$imgArr[] = 'images/products/' . $imgName;
+				}
+			}
 		}
 	}
+	$img = implode(',', $imgArr);
 
 	// Сохраняем colors как строку (через запятую)
 	$colors_str = trim($colors);
@@ -65,8 +71,9 @@ foreach ($subcategories as $sub) {
 	<label for="discount">Discount (optional)</label>
 	<input type="text" name="discount" id="discount" placeholder="-24%">
 
-	<label for="img">Image</label>
-	<input type="file" name="img" id="img" accept="image/*">
+	<label for="img">Images</label>
+	<input type="file" name="img[]" id="img" accept="image/*" multiple>
+	<div id="img_preview" style="margin:6px 0;"></div>
 
 	<label for="colors">Colors</label>
 	<div id="colorsPickerWrap" style="margin-bottom:8px;">
@@ -195,6 +202,21 @@ foreach ($subcategories as $sub) {
 			updateColorsField();
 		}
 	};
+
+	// Preview multiple images
+	document.getElementById('img').addEventListener('change', function () {
+		const preview = document.getElementById('img_preview');
+		preview.innerHTML = '';
+		Array.from(this.files).forEach(file => {
+			const reader = new FileReader();
+			reader.onload = function (e) {
+				const img = document.createElement('img');
+				img.src = e.target.result;
+				img.style.maxWidth = '60px';
+				img.style.marginRight = '4px';
+				preview.appendChild(img);
+			};
+			reader.readAsDataURL(file);
+		});
+	});
 </script>
-<?php
-?>

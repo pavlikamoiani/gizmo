@@ -47,33 +47,41 @@ $result = $stmt->get_result();
 			<h2>კატეგორია: <?= htmlspecialchars($category) ?></h2>
 			<div class="product-grid">
 				<?php if ($result->num_rows === 0): ?>
-					<div style="color:#fff;padding:30px;">ამ კატეგორიაში პროდუქცია არ მოიძებნა.</div>
+					<div style="color:#fff;">ამ კატეგორიაში პროდუქცია არ მოიძებნა.</div>
 				<?php else: ?>
 					<?php while ($row = $result->fetch_assoc()): ?>
-						<div class="product-card">
-							<?php if (!empty($row['discount'])): ?>
-								<div class="discount-badge"><?= htmlspecialchars($row['discount']) ?></div>
-							<?php endif; ?>
-							<div class="img-wrap">
-								<img src="../<?= htmlspecialchars($row['img']) ?>" alt="<?= htmlspecialchars($row['title']) ?>">
-							</div>
-							<h3><?= htmlspecialchars($row['title']) ?></h3>
-							<div class="color-options">
-								<?php
-								$colors = array_filter(array_map('trim', explode(',', $row['colors'])));
-								foreach ($colors as $color) {
-									echo '<span class="color-circle" style="background:' . htmlspecialchars($color) . ';"></span>';
-								}
-								?>
-							</div>
-							<div class="price-row">
-								<?php if (!empty($row['oldPrice'])): ?>
-									<span class="old-price"><?= htmlspecialchars($row['oldPrice']) ?></span>
+						<a href="product-detail.php?id=<?= $row['id'] ?>" style="text-decoration:none;">
+							<div class="product-card">
+								<?php if (!empty($row['discount'])): ?>
+									<div class="discount-badge"><?= htmlspecialchars($row['discount']) ?></div>
 								<?php endif; ?>
-								<span class="price"><?= htmlspecialchars($row['price']) ?></span>
+								<div class="img-wrap">
+									<?php
+									$imgList = array_filter(array_map('trim', explode(',', $row['img'])));
+									$firstImg = isset($imgList[0]) ? $imgList[0] : '';
+									if ($firstImg) {
+										echo '<img src="../' . htmlspecialchars($firstImg) . '" alt="' . htmlspecialchars($row['title']) . '">';
+									}
+									?>
+								</div>
+								<h3><?= htmlspecialchars($row['title']) ?></h3>
+								<div class="color-options">
+									<?php
+									$colors = array_filter(array_map('trim', explode(',', $row['colors'])));
+									foreach ($colors as $color) {
+										echo '<span class="color-circle" style="background:' . htmlspecialchars($color) . ';"></span>';
+									}
+									?>
+								</div>
+								<div class="price-row">
+									<?php if (!empty($row['oldPrice'])): ?>
+										<span class="old-price"><?= htmlspecialchars($row['oldPrice']) ?></span>
+									<?php endif; ?>
+									<span class="price"><?= htmlspecialchars($row['price']) ?></span>
+								</div>
+								<div class="monthly-payment"><?= htmlspecialchars($row['monthly']) ?></div>
 							</div>
-							<div class="monthly-payment"><?= htmlspecialchars($row['monthly']) ?></div>
-						</div>
+						</a>
 					<?php endwhile; ?>
 				<?php endif; ?>
 			</div>

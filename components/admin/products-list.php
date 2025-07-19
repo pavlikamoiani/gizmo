@@ -15,16 +15,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_product'])) {
 		$subcategory_id = null;
 
 	$img = $_POST['current_img'] ?? '';
-	if (isset($_FILES['img']) && $_FILES['img']['error'] === UPLOAD_ERR_OK) {
-		$ext = pathinfo($_FILES['img']['name'], PATHINFO_EXTENSION);
-		$imgName = uniqid('prod_', true) . '.' . $ext;
-		$targetDir = $_SERVER['DOCUMENT_ROOT'] . '/gizmo/images/products/';
-		if (!is_dir($targetDir))
-			mkdir($targetDir, 0777, true);
-		$targetFile = $targetDir . $imgName;
-		if (move_uploaded_file($_FILES['img']['tmp_name'], $targetFile)) {
-			$img = 'images/products/' . $imgName;
+	if (isset($_FILES['img']) && !empty($_FILES['img']['name'][0])) {
+		$imgArr = [];
+		foreach ($_FILES['img']['name'] as $i => $name) {
+			if ($_FILES['img']['error'][$i] === UPLOAD_ERR_OK) {
+				$ext = pathinfo($name, PATHINFO_EXTENSION);
+				$imgName = uniqid('prod_', true) . '.' . $ext;
+				$targetDir = $_SERVER['DOCUMENT_ROOT'] . '/gizmo/images/products/';
+				if (!is_dir($targetDir))
+					mkdir($targetDir, 0777, true);
+				$targetFile = $targetDir . $imgName;
+				if (move_uploaded_file($_FILES['img']['tmp_name'][$i], $targetFile)) {
+					$imgArr[] = 'images/products/' . $imgName;
+				}
+			}
 		}
+		$img = implode(',', $imgArr);
 	}
 
 	$stmt = $conn->prepare("UPDATE products SET title=?, discount=?, img=?, colors=?, oldPrice=?, price=?, monthly=?, category_id=?, subcategory_id=? WHERE id=?");
@@ -171,7 +177,12 @@ if (isset($_POST['import_products']) && isset($_FILES['products_excel']) && $_FI
 				<td><?= htmlspecialchars($row['discount']) ?></td>
 				<td>
 					<?php if (!empty($row['img'])): ?>
-						<img src="/gizmo/<?= htmlspecialchars($row['img']) ?>" alt="prod-img" style="max-width:60px;">
+						<?php foreach (explode(',', $row['img']) as $imgPath): ?>
+							<?php if (trim($imgPath)): ?>
+								<img src="/gizmo/<?= htmlspecialchars(trim($imgPath)) ?>" alt="prod-img"
+									style="max-width:60px;margin-right:4px;">
+							<?php endif; ?>
+						<?php endforeach; ?>
 					<?php endif; ?>
 				</td>
 				<td>

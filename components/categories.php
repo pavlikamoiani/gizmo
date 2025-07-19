@@ -11,7 +11,11 @@ if ($result && $result->num_rows > 0) {
                 <div class="category-desc"><?= htmlspecialchars($row['desc']) ?></div>
                 <a class="category-btn" href="components/category-view.php?category=<?= urlencode($row['title']) ?>">სრულად</a>
             </div>
-            <img class="category-img" src="<?= htmlspecialchars($row['img']) ?>" alt="<?= htmlspecialchars($row['title']) ?>">
+            <?php
+            $imgList = explode(',', $row['img']);
+            $firstImg = trim($imgList[0]);
+            ?>
+            <img class="category-img" src="<?= htmlspecialchars($firstImg) ?>" alt="<?= htmlspecialchars($row['title']) ?>">
         </div>
         <?php
     }

@@ -88,7 +88,7 @@ $sub_stmt->close();
 				$stmt->execute();
 				$result = $stmt->get_result();
 				if ($result->num_rows === 0): ?>
-					<div style="color:#fff;padding:30px;">ამ კატეგორიაში პროდუქცია არ მოიძებნა.</div>
+					<div style="color:#fff;">ამ კატეგორიაში პროდუქცია არ მოიძებნა.</div>
 				<?php else:
 					while ($row = $result->fetch_assoc()): ?>
 						<div class="product-card">
@@ -96,7 +96,13 @@ $sub_stmt->close();
 								<div class="discount-badge"><?= htmlspecialchars($row['discount']) ?></div>
 							<?php endif; ?>
 							<div class="img-wrap">
-								<img src="../<?= htmlspecialchars($row['img']) ?>" alt="<?= htmlspecialchars($row['title']) ?>">
+								<?php
+								$imgList = array_filter(array_map('trim', explode(',', $row['img'])));
+								$firstImg = isset($imgList[0]) ? $imgList[0] : '';
+								if ($firstImg) {
+									echo '<img src="../' . htmlspecialchars($firstImg) . '" alt="' . htmlspecialchars($row['title']) . '">';
+								}
+								?>
 							</div>
 							<h3><?= htmlspecialchars($row['title']) ?></h3>
 							<div class="color-options">

@@ -3,7 +3,7 @@
 	<div class="footer-container">
 		<div class="footer-section">
 			<div class="footer-brand">
-				<img src="images/gizmo-logo.png" alt="Gizmo Logo">
+				<img src="/gizmo/images/gizmo-logo.png" alt="Gizmo Logo">
 				<span class="logo-text"><span class="logo-circle"></span> Gizmo</span>
 			</div>
 			<div class="footer-contact-info">
@@ -46,11 +46,10 @@
 		<div class="footer-bottom-left">
 			<p>All Rights Reserved. © gizmo.ge</p>
 		</div>
-
 		<div class="footer-bottom-right">
 			<div class="payment-methods">
-				<img src="images/visa.png" alt="Visa" class="payment-method">
-				<img src="images/mastercard.png" alt="Mastercard" class="payment-method">
+				<img src="/gizmo/images/visa.png" alt="Visa" class="payment-method">
+				<img src="/gizmo/images/mastercard.png" alt="Mastercard" class="payment-method">
 			</div>
 		</div>
 	</div>

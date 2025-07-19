@@ -24,8 +24,8 @@ foreach ($subcategories as $sub) {
 	<label for="edit_discount">Discount (optional)</label>
 	<input type="text" name="discount" id="edit_discount" placeholder="-24%">
 
-	<label for="edit_img">Image</label>
-	<input type="file" name="img" id="edit_img" accept="image/*">
+	<label for="edit_img">Images</label>
+	<input type="file" name="img[]" id="edit_img" accept="image/*" multiple>
 	<div id="edit_img_preview" style="margin:6px 0;"></div>
 
 	<label for="edit_colors">Colors</label>
@@ -183,9 +183,16 @@ foreach ($subcategories as $sub) {
 			editSubcategoryWrap.style.display = 'none';
 		}
 		editSubcategorySelect.value = data.subcategory || "0";
-		// Превью изображения
+		// Превью изображений
 		const preview = document.getElementById('edit_img_preview');
-		preview.innerHTML = data.img ? `<img src="/gizmo/${data.img}" alt="prod-img" style="max-width:60px;">` : '';
+		preview.innerHTML = '';
+		if (data.img) {
+			data.img.split(',').forEach(function (imgPath) {
+				if (imgPath.trim()) {
+					preview.innerHTML += `<img src="/gizmo/${imgPath.trim()}" alt="prod-img" style="max-width:60px;margin-right:4px;">`;
+				}
+			});
+		}
 		// Colors
 		editColorsArr = [];
 		if (data.colors) {
@@ -195,4 +202,21 @@ foreach ($subcategories as $sub) {
 		}
 		updateEditColorsField();
 	};
+
+	// Preview multiple images for edit
+	document.getElementById('edit_img').addEventListener('change', function () {
+		const preview = document.getElementById('edit_img_preview');
+		preview.innerHTML = '';
+		Array.from(this.files).forEach(file => {
+			const reader = new FileReader();
+			reader.onload = function (e) {
+				const img = document.createElement('img');
+				img.src = e.target.result;
+				img.style.maxWidth = '60px';
+				img.style.marginRight = '4px';
+				preview.appendChild(img);
+			};
+			reader.readAsDataURL(file);
+		});
+	});
 </script>
