@@ -49,6 +49,21 @@ $products = $conn->query("SELECT p.*, c.title as category_title, s.title as subc
 
 if (isset($_GET['delete_product'])) {
 	$id = intval($_GET['delete_product']);
+	// Get image path(s) before deleting
+	$imgRes = $conn->query("SELECT img FROM products WHERE id = $id LIMIT 1");
+	if ($imgRes && $imgRes->num_rows > 0) {
+		$imgRow = $imgRes->fetch_assoc();
+		$imgPaths = explode(',', $imgRow['img']);
+		foreach ($imgPaths as $imgPath) {
+			$imgPath = trim($imgPath);
+			if ($imgPath) {
+				$filePath = $_SERVER['DOCUMENT_ROOT'] . '/gizmo/' . $imgPath;
+				if (file_exists($filePath)) {
+					unlink($filePath);
+				}
+			}
+		}
+	}
 	$conn->query("DELETE FROM products WHERE id = $id");
 	header("Location: " . strtok($_SERVER["REQUEST_URI"], '?'));
 	exit;
