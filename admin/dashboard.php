@@ -46,11 +46,6 @@ if ($check_admins && $check_admins->num_rows > 0) {
                             <span class="sidebar-icon">🛒</span>Products
                         </a>
                     </li>
-                    <li>
-                        <a href="export-excel.php">
-                            <span class="sidebar-icon">⬇️</span>Export Excel
-                        </a>
-                    </li>
                 </ul>
             </nav>
             <div class="sidebar-footer">

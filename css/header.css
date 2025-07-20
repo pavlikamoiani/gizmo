@@ -7,12 +7,11 @@
 }
 
 .brand-bar-container {
-	max-width: 1400px;
 	margin: 0 auto;
 	display: flex;
 	align-items: center;
 	justify-content: flex-end;
-	padding: 5px 20px;
+	padding: 5px 40px;
 	height: 44px;
 }
 
@@ -37,7 +36,7 @@
 header {
 	background: #182a47;
 	box-shadow: 0 2px 12px #4e92e540;
-	padding: 10px 0;
+	padding: 10px 40px;
 	position: sticky;
 	top: 0;
 	z-index: 100;

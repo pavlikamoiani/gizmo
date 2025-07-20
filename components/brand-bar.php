@@ -7,8 +7,8 @@
 				<img src="images/samsung-logo.png" alt="samsung" class="brand-logo" />
 			</div> -->
 		<div class="brand-menu">
-			<a href="#">% აქციები</a>
-			<a href="#">✓ ეს შენ ბიზნესისთვის</a>
+			<a href="components/discount-products.php">% აქციები</a>
+			<a href="#">✓ ეს თქვენ ბიზნესისთვის</a>
 			<a href="#">📢 მნიშვნელოვანი ამბები</a>
 			<a href="#contact">⦿ ეს ჩვენ შესახებ</a>
 		</div>

@@ -12,8 +12,6 @@
 	<link rel="stylesheet" href="css/category.css">
 	<link rel="stylesheet" href="css/products.css">
 	<link rel="stylesheet" href="css/hero.css">
-	<link rel="stylesheet" href="css/footer.css">
-
 	<link rel="icon" href="images/gizmo-icon.png" type="image/x-icon">
 </head>
 

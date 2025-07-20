@@ -1,4 +1,8 @@
 <!-- Footer Section -->
+<link rel="stylesheet" href="../css/footer.css">
+
+<link rel="stylesheet" href="css/footer.css">
+
 <footer class="footer">
 	<div class="footer-container">
 		<div class="footer-section">
@@ -25,7 +29,7 @@
 			<h3>სოციალური ქსელი</h3>
 			<ul>
 				<li><a href="#">Facebook</a></li>
-				<li><a href="#">Instagram</a></li>
+				<li><a href="https://www.instagram.com/gizmo_georgia/">Instagram</a></li>
 				<li><a href="#">YouTube</a></li>
 				<li><a href="#">WhatsApp</a></li>
 			</ul>
