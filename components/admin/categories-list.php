@@ -7,6 +7,18 @@ if ($conn->connect_error) {
 
 if (isset($_GET['delete_category'])) {
 	$id = intval($_GET['delete_category']);
+	// Get image path before deleting
+	$imgRes = $conn->query("SELECT img FROM categories WHERE id = $id LIMIT 1");
+	if ($imgRes && $imgRes->num_rows > 0) {
+		$imgRow = $imgRes->fetch_assoc();
+		$imgPath = $imgRow['img'];
+		if ($imgPath) {
+			$filePath = $_SERVER['DOCUMENT_ROOT'] . '/gizmo/' . $imgPath;
+			if (file_exists($filePath)) {
+				unlink($filePath);
+			}
+		}
+	}
 	$conn->query("DELETE FROM categories WHERE id = $id");
 	header("Location: " . strtok($_SERVER["REQUEST_URI"], '?'));
 	exit;
