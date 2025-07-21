@@ -9,7 +9,6 @@ if (!$category) {
 	exit;
 }
 
-// Get category id by title
 $stmt = $conn->prepare("SELECT id FROM categories WHERE title = ?");
 $stmt->bind_param("s", $category);
 $stmt->execute();
@@ -22,7 +21,6 @@ if (empty($cat_id)) {
 	exit;
 }
 
-// Get subcategories for filter
 $sub_stmt = $conn->prepare("SELECT id, title FROM subcategories WHERE category_id = ?");
 $sub_stmt->bind_param("i", $cat_id);
 $sub_stmt->execute();
@@ -37,7 +35,6 @@ $page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
 $products_per_page = 20;
 $offset = ($page - 1) * $products_per_page;
 
-// Count total products for pagination
 $count_stmt = $conn->prepare("SELECT COUNT(*) FROM products WHERE category_id = ?");
 $count_stmt->bind_param("i", $cat_id);
 $count_stmt->execute();
@@ -47,7 +44,6 @@ $count_stmt->close();
 
 $total_pages = ceil($total_products / $products_per_page);
 
-// Get products for current page
 $stmt = $conn->prepare("SELECT * FROM products WHERE category_id = ? ORDER BY id DESC LIMIT ? OFFSET ?");
 $stmt->bind_param("iii", $cat_id, $products_per_page, $offset);
 $stmt->execute();
@@ -166,13 +162,12 @@ $result = $stmt->get_result();
 				const subcatId = this.value;
 				const productsGrid = document.getElementById('productsGrid');
 				productsGrid.innerHTML = '<div style="color:#fff;padding:30px;">იტვირთება...</div>';
-				const page = 1; // Always reset to first page on filter
+				const page = 1;
 				const xhr = new XMLHttpRequest();
 				xhr.open('GET', 'category-view-products.php?category_id=<?= $cat_id ?>&subcategory_id=' + subcatId + '&page=' + page, true);
 				xhr.onload = function () {
 					if (xhr.status === 200) {
 						productsGrid.innerHTML = xhr.responseText;
-						// Optionally, update pagination here if needed
 					} else {
 						productsGrid.innerHTML = '<div style="color:#fff;padding:30px;">შეცდომა დატვირთვაში.</div>';
 					}

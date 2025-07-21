@@ -7,7 +7,6 @@ if ($conn->connect_error) {
 
 if (isset($_GET['delete_category'])) {
 	$id = intval($_GET['delete_category']);
-	// Get image path before deleting
 	$imgRes = $conn->query("SELECT img FROM categories WHERE id = $id LIMIT 1");
 	if ($imgRes && $imgRes->num_rows > 0) {
 		$imgRow = $imgRes->fetch_assoc();

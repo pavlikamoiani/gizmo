@@ -1,11 +1,9 @@
 <?php
 require_once __DIR__ . '/../../db/db.php';
 
-// Получение категорий и подкатегорий
 $categories = $conn->query("SELECT id, title FROM categories ORDER BY title ASC");
 $subcategories = $conn->query("SELECT id, title, category_id FROM subcategories ORDER BY title ASC");
 
-// Обработка добавления продукта
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_product'])) {
 	$title = $_POST['title'] ?? '';
 	$discount = $_POST['discount'] ?? '';
@@ -20,7 +18,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_product'])) {
 		$subcategory_id = null;
 	}
 
-	// Загрузка изображений
 	$imgArr = [];
 	if (isset($_FILES['img']) && !empty($_FILES['img']['name'][0])) {
 		foreach ($_FILES['img']['name'] as $i => $name) {
@@ -39,10 +36,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_product'])) {
 	}
 	$img = implode(',', $imgArr);
 
-	// Сохраняем colors как строку (через запятую)
 	$colors_str = trim($colors);
 
-	// Добавление в базу
 	$stmt = $conn->prepare("INSERT INTO products (title, discount, img, colors, oldPrice, price, monthly, category_id, subcategory_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
 	$stmt->bind_param("sssssssii", $title, $discount, $img, $colors_str, $oldPrice, $price, $monthly, $category_id, $subcategory_id);
 	$stmt->execute();
@@ -51,7 +46,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_product'])) {
 	exit;
 }
 
-// Передаем подкатегории в JS
 $subcatMap = [];
 foreach ($subcategories as $sub) {
 	$subcatMap[$sub['category_id']][] = [
@@ -132,7 +126,6 @@ foreach ($subcategories as $sub) {
 		subcategorySelect.value = "0";
 	});
 
-	// Автоматически добавлять символ ₾ в Old Price (optional) и Price*
 	document.addEventListener('DOMContentLoaded', function () {
 		const oldPriceInput = document.querySelector('input[name="oldPrice"]');
 		const priceInput = document.querySelector('input[name="price"]');
@@ -176,7 +169,6 @@ foreach ($subcategories as $sub) {
 		}
 	});
 
-	// Color picker logic
 	const colorsInput = document.getElementById('colors');
 	const colorInput = document.getElementById('colorInput');
 	const addColorBtn = document.getElementById('addColorBtn');
@@ -203,7 +195,6 @@ foreach ($subcategories as $sub) {
 		}
 	};
 
-	// Preview multiple images
 	document.getElementById('img').addEventListener('change', function () {
 		const preview = document.getElementById('img_preview');
 		preview.innerHTML = '';

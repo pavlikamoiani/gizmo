@@ -1,11 +1,9 @@
 <?php
 require_once __DIR__ . '/../../db/db.php';
 
-// Получение категорий и подкатегорий
 $categories = $conn->query("SELECT id, title FROM categories ORDER BY title ASC");
 $subcategories = $conn->query("SELECT id, title, category_id FROM subcategories ORDER BY title ASC");
 
-// Передаем подкатегории в JS
 $subcatMap = [];
 foreach ($subcategories as $sub) {
 	$subcatMap[$sub['category_id']][] = [
@@ -86,7 +84,6 @@ foreach ($subcategories as $sub) {
 		editSubcategorySelect.value = "0";
 	});
 
-	// Автоматически добавлять символ ₾ в Old Price и Price
 	document.addEventListener('DOMContentLoaded', function () {
 		const oldPriceInput = document.getElementById('edit_oldPrice');
 		const priceInput = document.getElementById('edit_price');
@@ -130,7 +127,6 @@ foreach ($subcategories as $sub) {
 		}
 	});
 
-	// Color picker logic for edit
 	const editColorsInput = document.getElementById('edit_colors');
 	const editColorInput = document.getElementById('editColorInput');
 	const editAddColorBtn = document.getElementById('editAddColorBtn');
@@ -157,7 +153,6 @@ foreach ($subcategories as $sub) {
 		}
 	};
 
-	// Функция для заполнения формы редактирования
 	window.fillEditProductForm = function (data) {
 		document.getElementById('edit_id').value = data.id || '';
 		document.getElementById('edit_title').value = data.title || '';
@@ -167,7 +162,6 @@ foreach ($subcategories as $sub) {
 		document.getElementById('edit_monthly').value = data.monthly || '';
 		document.getElementById('edit_categorySelect').value = data.category || '';
 		document.getElementById('edit_current_img').value = data.img || '';
-		// Заполнить подкатегории
 		const catId = data.category || '';
 		const subcats = editSubcategoriesByCategory[catId] || [];
 		editSubcategorySelect.innerHTML = '<option value="0">None</option>';
@@ -183,7 +177,6 @@ foreach ($subcategories as $sub) {
 			editSubcategoryWrap.style.display = 'none';
 		}
 		editSubcategorySelect.value = data.subcategory || "0";
-		// Превью изображений
 		const preview = document.getElementById('edit_img_preview');
 		preview.innerHTML = '';
 		if (data.img) {
@@ -193,7 +186,6 @@ foreach ($subcategories as $sub) {
 				}
 			});
 		}
-		// Colors
 		editColorsArr = [];
 		if (data.colors) {
 			data.colors.split(',').forEach(function (color) {
@@ -203,7 +195,6 @@ foreach ($subcategories as $sub) {
 		updateEditColorsField();
 	};
 
-	// Preview multiple images for edit
 	document.getElementById('edit_img').addEventListener('change', function () {
 		const preview = document.getElementById('edit_img_preview');
 		preview.innerHTML = '';

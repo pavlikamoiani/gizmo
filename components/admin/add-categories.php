@@ -9,7 +9,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_category'])) {
     $desc = $_POST['desc'] ?? '';
     $img = '';
 
-    // Обработка загрузки изображения
     if (isset($_FILES['img']) && $_FILES['img']['error'] === UPLOAD_ERR_OK) {
         $ext = pathinfo($_FILES['img']['name'], PATHINFO_EXTENSION);
         $imgName = uniqid('cat_', true) . '.' . $ext;
@@ -30,7 +29,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_category'])) {
         if ($stmt->execute()) {
             $success = "Category added!";
 
-            // Добавление в categories.js
             $jsFile = __DIR__ . '/../../js/categories.js';
             $categoryObj = "\t\t{\n";
             $categoryObj .= "\t\t\ttitle: \"" . addslashes($title) . "\",\n";
@@ -85,7 +83,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_category'])) {
 <!-- JS -->
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        // Модальное окно
         const modal = document.getElementById('addCategoryModal');
         const closeModal = document.getElementById('closeAddCategoryModal');
         const openModalBtn = document.getElementById('addCategoryBtn');
@@ -98,7 +95,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_category'])) {
             }
         };
 
-        // Обновление кнопок удаления подкатегорий
         function updateRemoveBtns() {
             const rows = document.querySelectorAll('.subcategory-row');
             rows.forEach((row) => {

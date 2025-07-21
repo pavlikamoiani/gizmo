@@ -49,7 +49,6 @@ $products = $conn->query("SELECT p.*, c.title as category_title, s.title as subc
 
 if (isset($_GET['delete_product'])) {
 	$id = intval($_GET['delete_product']);
-	// Get image path(s) before deleting
 	$imgRes = $conn->query("SELECT img FROM products WHERE id = $id LIMIT 1");
 	if ($imgRes && $imgRes->num_rows > 0) {
 		$imgRow = $imgRes->fetch_assoc();
@@ -97,37 +96,40 @@ if (isset($_POST['import_products']) && isset($_FILES['products_excel']) && $_FI
 			if ($cat_res && $cat_res->num_rows > 0) {
 				$cat_row = $cat_res->fetch_assoc();
 				$category_id = $cat_row['id'];
-				$subcategory_id = null;
-				if ($subcategory_title) {
-					$sub_res = $conn->query("SELECT id FROM subcategories WHERE category_id=$category_id AND title='$subcategory_title' LIMIT 1");
-					if ($sub_res && $sub_res->num_rows > 0) {
-						$sub_row = $sub_res->fetch_assoc();
-						$subcategory_id = $sub_row['id'];
-					}
-				}
-				// Проверка на дубликат
-				if ($subcategory_id) {
-					$dup_res = $conn->query("SELECT id FROM products WHERE title='$title' AND category_id=$category_id AND subcategory_id=$subcategory_id LIMIT 1");
+			} else {
+				$conn->query("INSERT INTO categories (title) VALUES ('$category_title')");
+				$category_id = $conn->insert_id;
+			}
+			$subcategory_id = null;
+			if ($subcategory_title) {
+				$sub_res = $conn->query("SELECT id FROM subcategories WHERE category_id=$category_id AND title='$subcategory_title' LIMIT 1");
+				if ($sub_res && $sub_res->num_rows > 0) {
+					$sub_row = $sub_res->fetch_assoc();
+					$subcategory_id = $sub_row['id'];
 				} else {
-					$dup_res = $conn->query("SELECT id FROM products WHERE title='$title' AND category_id=$category_id AND (subcategory_id IS NULL OR subcategory_id=0) LIMIT 1");
+					$conn->query("INSERT INTO subcategories (category_id, title) VALUES ($category_id, '$subcategory_title')");
+					$subcategory_id = $conn->insert_id;
 				}
-				if ($dup_res && $dup_res->num_rows > 0) {
-					// Обновить существующий продукт
-					$dup_row = $dup_res->fetch_assoc();
-					$prod_id = $dup_row['id'];
-					$stmt = $conn->prepare("UPDATE products SET discount=?, colors=?, oldPrice=?, price=?, monthly=? WHERE id=?");
-					$stmt->bind_param("sssssi", $discount, $colors, $oldPrice, $price, $monthly, $prod_id);
-					$stmt->execute();
-					$stmt->close();
-					$updated[] = $title;
-				} else {
-					// Добавить новый продукт
-					$stmt = $conn->prepare("INSERT INTO products (title, discount, colors, oldPrice, price, monthly, category_id, subcategory_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-					$stmt->bind_param("ssssssii", $title, $discount, $colors, $oldPrice, $price, $monthly, $category_id, $subcategory_id);
-					$stmt->execute();
-					$stmt->close();
-					$added[] = $title;
-				}
+			}
+			if ($subcategory_id) {
+				$dup_res = $conn->query("SELECT id FROM products WHERE title='$title' AND category_id=$category_id AND subcategory_id=$subcategory_id LIMIT 1");
+			} else {
+				$dup_res = $conn->query("SELECT id FROM products WHERE title='$title' AND category_id=$category_id AND (subcategory_id IS NULL OR subcategory_id=0) LIMIT 1");
+			}
+			if ($dup_res && $dup_res->num_rows > 0) {
+				$dup_row = $dup_res->fetch_assoc();
+				$prod_id = $dup_row['id'];
+				$stmt = $conn->prepare("UPDATE products SET discount=?, colors=?, oldPrice=?, price=?, monthly=? WHERE id=?");
+				$stmt->bind_param("sssssi", $discount, $colors, $oldPrice, $price, $monthly, $prod_id);
+				$stmt->execute();
+				$stmt->close();
+				$updated[] = $title;
+			} else {
+				$stmt = $conn->prepare("INSERT INTO products (title, discount, colors, oldPrice, price, monthly, category_id, subcategory_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+				$stmt->bind_param("ssssssii", $title, $discount, $colors, $oldPrice, $price, $monthly, $category_id, $subcategory_id);
+				$stmt->execute();
+				$stmt->close();
+				$added[] = $title;
 			}
 		}
 	}

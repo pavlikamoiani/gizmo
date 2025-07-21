@@ -9,7 +9,6 @@ if (!$category) {
 	exit;
 }
 
-// Get category id by title
 $stmt = $conn->prepare("SELECT id FROM categories WHERE title = ?");
 $stmt->bind_param("s", $category);
 $stmt->execute();
@@ -22,7 +21,6 @@ if (empty($cat_id)) {
 	exit;
 }
 
-// Get products for this category
 $stmt = $conn->prepare("SELECT * FROM products WHERE category_id = ? ORDER BY id DESC");
 $stmt->bind_param("i", $cat_id);
 $stmt->execute();
