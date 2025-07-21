@@ -72,7 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_category'])) {
             <label>Title*</label>
             <input type="text" name="title" required>
             <label>Description</label>
-            <input type="text" name="desc" required>
+            <input type="text" name="desc">
             <label>Image</label>
             <input type="file" name="img" accept="image/*">
             <button type="submit" name="add_category" class="modal-btn">Add Category</button>

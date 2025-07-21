@@ -49,6 +49,8 @@ $images = array_filter(array_map('trim', explode(',', $product['img'])));
 	<link rel="stylesheet" href="../css/products.css">
 	<link rel="stylesheet" href="../css/header.css">
 	<link rel="stylesheet" href="../css/product-detail.css">
+
+	<link rel="icon" href="../images/gizmo-icon.png" type="image/x-icon">
 </head>
 
 <body style="background:#101a2b;">

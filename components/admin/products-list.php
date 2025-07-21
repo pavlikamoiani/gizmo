@@ -26,6 +26,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_product'])) {
 					mkdir($targetDir, 0777, true);
 				$targetFile = $targetDir . $imgName;
 				if (move_uploaded_file($_FILES['img']['tmp_name'][$i], $targetFile)) {
+					$apiKey = '3ezHZfrzWuuH7HvJ1PKcDCFo';
+					$ch = curl_init();
+					curl_setopt($ch, CURLOPT_URL, 'https://api.remove.bg/v1.0/removebg');
+					curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+					curl_setopt($ch, CURLOPT_POST, 1);
+					curl_setopt($ch, CURLOPT_POSTFIELDS, [
+						'image_file' => new CURLFile($targetFile),
+						'size' => 'auto'
+					]);
+					curl_setopt($ch, CURLOPT_HTTPHEADER, [
+						'X-Api-Key: ' . $apiKey
+					]);
+					$response = curl_exec($ch);
+					$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+					curl_close($ch);
+					if ($httpCode == 200 && $response) {
+						file_put_contents($targetFile, $response);
+					}
+					// --- End remove.bg ---
 					$imgArr[] = 'images/products/' . $imgName;
 				}
 			}

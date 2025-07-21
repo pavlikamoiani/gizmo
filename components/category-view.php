@@ -58,6 +58,8 @@ $result = $stmt->get_result();
 	<link rel="stylesheet" href="../css/style.css">
 	<link rel="stylesheet" href="../css/products.css">
 	<link rel="stylesheet" href="../css/header.css">
+	<link rel="icon" href="../images/gizmo-icon.png" type="image/x-icon">
+
 	<style>
 		.filter-bar {
 			position: absolute;

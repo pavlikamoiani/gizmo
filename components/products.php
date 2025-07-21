@@ -3,6 +3,7 @@ require_once __DIR__ . '/../db/db.php';
 
 $result = $conn->query("SELECT * FROM products ORDER BY id DESC LIMIT 10");
 ?>
+<link rel="icon" href="../images/gizmo-icon.png" type="image/x-icon">
 
 <div class="product-grid">
 	<?php if ($result && $result->num_rows > 0): ?>
