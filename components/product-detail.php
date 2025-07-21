@@ -27,7 +27,24 @@ $images = array_filter(array_map('trim', explode(',', $product['img'])));
 
 <head>
 	<meta charset="UTF-8">
-	<title><?= htmlspecialchars($product['title']) ?></title>
+	<title><?= htmlspecialchars($product['title']) ?> | Gizmo</title>
+	<?php
+	$metaTitle = htmlspecialchars($product['title']) . ' | Gizmo';
+	$metaDesc = !empty($product['desc']) ? htmlspecialchars($product['desc']) : htmlspecialchars($product['title']) . ' - იხილეთ დეტალები და ფასები Gizmo-ზე.';
+	$metaKeywords = htmlspecialchars($product['title']);
+	if (!empty($product['category_title']))
+		$metaKeywords .= ', ' . htmlspecialchars($product['category_title']);
+	if (!empty($product['subcategory_title']))
+		$metaKeywords .= ', ' . htmlspecialchars($product['subcategory_title']);
+	$ogImage = isset($images[0]) ? '/gizmo/' . htmlspecialchars($images[0]) : '/gizmo/images/gizmo-logo.png';
+	?>
+	<meta name="description" content="<?= $metaDesc ?>">
+	<meta name="keywords" content="<?= $metaKeywords ?>">
+	<meta property="og:title" content="<?= $metaTitle ?>">
+	<meta property="og:description" content="<?= $metaDesc ?>">
+	<meta property="og:type" content="product">
+	<meta property="og:url" content="https://<?= $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] ?>">
+	<meta property="og:image" content="<?= $ogImage ?>">
 	<link rel="stylesheet" href="../css/style.css">
 	<link rel="stylesheet" href="../css/products.css">
 	<link rel="stylesheet" href="../css/header.css">
