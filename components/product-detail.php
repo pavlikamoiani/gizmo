@@ -21,6 +21,17 @@ if (!$product) {
 
 $images = array_filter(array_map('trim', explode(',', $product['img'])));
 
+// --- Fetch product descriptions ---
+$descriptions = [];
+$desc_stmt = $conn->prepare("SELECT description FROM product_descriptions WHERE product_id = ?");
+$desc_stmt->bind_param("i", $id);
+$desc_stmt->execute();
+$desc_res = $desc_stmt->get_result();
+while ($row = $desc_res->fetch_assoc()) {
+	$descriptions[] = $row['description'];
+}
+$desc_stmt->close();
+
 ?>
 <!DOCTYPE html>
 <html lang="ka">
@@ -100,6 +111,21 @@ $images = array_filter(array_map('trim', explode(',', $product['img'])));
 				<?php if (!empty($product['desc'])): ?>
 					<div style="margin-bottom:18px;color:#444;font-size:1.08rem;">
 						<?= htmlspecialchars($product['desc']) ?>
+					</div>
+				<?php endif; ?>
+				<?php if (!empty($descriptions)): ?>
+					<div class="product-detail-descriptions">
+						<div
+							style="font-size:1.13rem;font-weight:600;color:#1a2340;margin-bottom:10px;letter-spacing:0.5px;display:flex;align-items:center;gap:8px;">
+							Description
+						</div>
+						<ul style="padding-left:20px;margin:0;">
+							<?php foreach ($descriptions as $desc): ?>
+								<li style="margin-bottom:7px; color:#222; font-size:1.04rem; line-height:1.6;">
+									<?= htmlspecialchars($desc) ?>
+								</li>
+							<?php endforeach; ?>
+						</ul>
 					</div>
 				<?php endif; ?>
 				<div style="margin-top:18px;color:#888;font-size:0.98rem;">

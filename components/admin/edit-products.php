@@ -11,6 +11,16 @@ foreach ($subcategories as $sub) {
 		'title' => $sub['title']
 	];
 }
+
+// Fetch descriptions for JS
+$edit_descriptions = [];
+if (!empty($_GET['edit_id'])) {
+	$pid = intval($_GET['edit_id']);
+	$res = $conn->query("SELECT description FROM product_descriptions WHERE product_id=$pid");
+	while ($row = $res->fetch_assoc()) {
+		$edit_descriptions[] = $row['description'];
+	}
+}
 ?>
 <link rel="stylesheet" href="../../css/admin/add-product-modal.css">
 <form method="post" enctype="multipart/form-data" class="product-form" id="editProductForm" style="max-width:350px;">
@@ -57,6 +67,12 @@ foreach ($subcategories as $sub) {
 			<option value="0">None</option>
 			<!-- options will be filled by JS -->
 		</select>
+	</div>
+	<!-- Add this section at the bottom of the form -->
+	<div id="editDescriptionsSection" style="margin-top:18px;">
+		<label>Descriptions</label>
+		<div id="editDescriptionsList"></div>
+		<button type="button" id="editAddDescriptionBtn" style="margin-top:8px;">Add Description</button>
 	</div>
 	<button type="submit" name="edit_product" class="modal-btn">Save Changes</button>
 </form>
@@ -193,6 +209,16 @@ foreach ($subcategories as $sub) {
 			});
 		}
 		updateEditColorsField();
+
+		// Fill descriptions if provided
+		editDescriptionsList.innerHTML = '';
+		if (data.descriptions && Array.isArray(data.descriptions)) {
+			data.descriptions.forEach(function (desc) {
+				addEditDescriptionField(desc);
+			});
+		} else {
+			addEditDescriptionField();
+		}
 	};
 
 	document.getElementById('edit_img').addEventListener('change', function () {
@@ -210,4 +236,18 @@ foreach ($subcategories as $sub) {
 			reader.readAsDataURL(file);
 		});
 	});
+
+	// --- Descriptions JS ---
+	const editDescriptionsList = document.getElementById('editDescriptionsList');
+	const editAddDescriptionBtn = document.getElementById('editAddDescriptionBtn');
+	function addEditDescriptionField(value = '') {
+		const div = document.createElement('div');
+		div.style.marginBottom = '6px';
+		div.innerHTML = `<input type="text" name="descriptions[]" value="${value.replace(/"/g, '&quot;')}" style="width:80%;" />
+			<button type="button" onclick="this.parentNode.remove()">Remove</button>`;
+		editDescriptionsList.appendChild(div);
+	}
+	editAddDescriptionBtn.onclick = function () {
+		addEditDescriptionField();
+	};
 </script>
