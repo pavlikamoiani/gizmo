@@ -1,60 +1,60 @@
 document.addEventListener('DOMContentLoaded', function () {
 	const slidesData = [
 		{
-			title: "iPhone 16 Pro Max",
-			icons: ["M", "A", "X", "+"],
+			title: "Sony PS4 dualshock",
+			icons: ["P", "S", "4", "+"],
 			offer: "0% განვადება - 8 თვემდე",
-			price: "თვეში 462₾-დან",
-			img: "/images/Apple-iPhone-16-Pro-hero-240909-lp.jpg.news_app_ed-removebg-preview.png",
-			imgAlt: "iPhone 16 Pro Max"
+			price: "თვეში 120₾-დან",
+			img: "images/playstation.png",
+			imgAlt: "Sony PS4 dualshock"
 		},
 		{
-			title: "Trade-In",
-			icons: ["ტ", "რ", "ი", "+"],
+			title: "Gaming console",
+			icons: ["G", "M", "C", "+"],
 			offer: "შეიცვალე ძველი ახალზე",
 			price: "საუკეთესო პირობებით",
-			img: "",
-			imgAlt: "Trade-In"
+			img: "images/console.png",
+			imgAlt: "Gaming console"
 		},
 		{
-			title: "დაზღვევა",
-			icons: ["დ", "ა", "ზ", "+"],
+			title: "i9 Pro Max",
+			icons: ["I", "9", "P", "+"],
 			offer: "დაზღვევის სერვისი",
 			price: "მშვიდად იყავი ტექნიკით",
-			img: "",
-			imgAlt: "Insurance"
+			img: "images/i9ProMax.png",
+			imgAlt: "i9 Pro Max"
 		},
 		{
-			title: "Dyson",
-			icons: ["D", "Y", "S", "+"],
-			offer: "ახალი Dyson ტექნიკა",
+			title: "Baby smart watch 2G",
+			icons: ["B", "S", "W", "+"],
+			offer: "მშვენიერი საჩუქარი",
 			price: "ფასდაკლება 10%-მდე",
-			img: "",
-			imgAlt: "Dyson"
+			img: "images/babysmart.png",
+			imgAlt: "Baby smart watch 2G"
 		},
 		{
-			title: "iPhone 16 Pro",
-			icons: ["P", "R", "O", "+"],
+			title: "Led Photographic Light RL26",
+			icons: ["L", "P", "L", "+"],
 			offer: "0% განვადება - 8 თვემდე",
-			price: "თვეში 387₾-დან",
-			img: "",
-			imgAlt: "iPhone 16 Pro"
+			price: "თვეში 120₾-დან",
+			img: "images/led.png",
+			imgAlt: "Led Photographic Light RL26"
 		},
 		{
-			title: "Insta360 X5",
-			icons: ["I", "N", "S", "+"],
-			offer: "360° კამერები",
-			price: "ახალი მოდელები უკვე საქართველოში",
-			img: "",
-			imgAlt: "Insta360 X5"
+			title: "iSteady სტაბილიზატორი",
+			icons: ["I", "S", "E", "+"],
+			offer: "0% განვადება - 8 თვემდე",
+			price: "თვეში 120₾-დან",
+			img: "images/isteady.png",
+			imgAlt: "iSteady სტაბილიზატორი"
 		},
 		{
-			title: "MacBook Air M4",
-			icons: ["მ", "ბ", "კ", "+"],
+			title: "Earldom Projector",
+			icons: ["E", "P", "R", "+"],
 			offer: "0% განვადება - 12 თვემდე",
-			price: "თვეში 299₾-დან",
-			img: "",
-			imgAlt: "MacBook Air M4"
+			price: "საუკეთესო პირობებით",
+			img: "images/Projector.png",
+			imgAlt: "Earldom Projector"
 		}
 	];
 

@@ -8,8 +8,8 @@
 			</div> -->
 		<div class="brand-menu">
 			<a href="components/discount-products.php">% აქციები</a>
-			<a href="#">✓ ეს თქვენ ბიზნესისთვის</a>
-			<a href="#">📢 მნიშვნელოვანი ამბები</a>
+			<!-- <a href="#">✓ ეს თქვენ ბიზნესისთვის</a>
+			<a href="#">📢 მნიშვნელოვანი ამბები</a> -->
 			<a href="#contact">⦿ ეს ჩვენ შესახებ</a>
 		</div>
 	</div>

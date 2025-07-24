@@ -25,13 +25,13 @@
 		<div class="custom-slider-content">
 		</div>
 		<div class="custom-slider-menu">
-			<button class="slider-menu-btn active" id="left-slider">iPhone 16 Pro Max</button>
-			<button class="slider-menu-btn">Trade-In</button>
-			<button class="slider-menu-btn">Insurance</button>
-			<button class="slider-menu-btn">Dyson</button>
-			<button class="slider-menu-btn">iPhone 16 Pro</button>
-			<button class="slider-menu-btn">Insta360 X5</button>
-			<button class="slider-menu-btn">MacBook Air M4</button>
+			<button class="slider-menu-btn active" id="left-slider">Sony PS4 dualshock</button>
+			<button class="slider-menu-btn">Gaming console</button>
+			<button class="slider-menu-btn">i9 Pro Max</button>
+			<button class="slider-menu-btn">Baby smart watch</button>
+			<button class="slider-menu-btn">Led Photographic</button>
+			<button class="slider-menu-btn">iSteady</button>
+			<button class="slider-menu-btn">Earldom Projector</button>
 		</div>
 	</section>
 	<section class="marquee-bar">
@@ -52,9 +52,6 @@
 		<section class="category" id="category">
 			<?php include 'components/categories.php'; ?>
 		</section>
-		<div class="show-more-categories-wrap">
-			<button class="show-more-categories-btn">ყველა კატეგორია</button>
-		</div>
 
 		<section class="products" id="product">
 			<h2>პროდუქცია</h2>
