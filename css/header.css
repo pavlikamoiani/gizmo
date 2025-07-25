@@ -154,6 +154,10 @@ header {
 		font-size: 0.7rem;
 	}
 
+	.logo-flex {
+		gap: 5px;
+	}
+
 	.logo-text {
 		font-size: 1.4rem;
 	}
