@@ -177,3 +177,95 @@
 	border-top-right-radius: 24px;
 	border-bottom-right-radius: 24px;
 }
+
+.custom-slider-menu-mobile {
+	display: none;
+	width: 100%;
+	max-width: 1200px;
+	margin: 20px auto 0 auto;
+	padding: 0 16px;
+}
+
+.custom-slider-menu-mobile select {
+	width: 100%;
+	padding: 12px 16px;
+	font-size: 1rem;
+	border-radius: 24px;
+	border: 1px solid #4e92e5;
+	background: #fff;
+	color: #4e92e5;
+	font-weight: 600;
+	box-shadow: 0 2px 12px #4e92e540;
+	outline: none;
+}
+
+/* Мобильная адаптация */
+@media (max-width: 900px) {
+	.custom-slider-menu {
+		display: none;
+	}
+
+	.custom-slider-menu-mobile {
+		display: block;
+		display: flex;
+		flex-direction: column;
+	}
+
+	.slider-slide {
+		position: static;
+		width: 100%;
+		padding: 0 8px;
+		flex-direction: column;
+		/* <-- добавлено */
+	}
+
+	.custom-slider-content {
+		gap: 16px;
+	}
+
+	.slider-left {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding-left: 0;
+		order: 1;
+		/* текст сверху */
+		width: 100%;
+	}
+
+	.slider-right {
+		order: 2;
+		/* фото снизу */
+		width: 100%;
+		justify-content: center;
+		align-items: center;
+		display: flex;
+	}
+
+	.slider-left h1 {
+		font-size: 1.2rem;
+		margin-bottom: 12px;
+	}
+
+	.slider-icons {
+		gap: 6px;
+		margin-bottom: 12px;
+	}
+
+	.slider-icon {
+		font-size: 1.2rem;
+		padding: 6px 10px;
+	}
+
+	.slider-offer,
+	.slider-price {
+		font-size: 0.95rem;
+		padding: 8px 16px;
+		margin-bottom: 10px;
+	}
+
+	.slider-right img {
+		max-width: 180px;
+		margin-top: 12px;
+	}
+}

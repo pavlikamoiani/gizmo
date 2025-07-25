@@ -146,6 +146,14 @@ header {
 		flex-direction: row;
 	}
 
+	.brand-menu {
+		gap: 10px;
+	}
+
+	.brand-menu a {
+		font-size: 0.7rem;
+	}
+
 	.logo-text {
 		font-size: 1.4rem;
 	}
