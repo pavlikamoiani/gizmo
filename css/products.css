@@ -182,11 +182,13 @@ button:hover {
 
 /* Responsive: adjust card height for mobile */
 @media (max-width: 900px) {
+	.products {
+		padding: 48px 25px;
+	}
+
 	.product-card {
 		display: flex;
 		flex-direction: column;
-		height: 320px;
-		max-height: 320px;
 	}
 
 	.product-card .img-wrap {
@@ -208,6 +210,7 @@ button:hover {
 	.product-card {
 		height: 270px;
 		max-height: 270px;
+		width: 100%;
 	}
 
 	.product-card .img-wrap {
