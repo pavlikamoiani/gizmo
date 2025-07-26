@@ -9,6 +9,7 @@ $result = $conn->query("SELECT * FROM products WHERE discount IS NOT NULL AND di
 <head>
 	<meta charset="UTF-8">
 	<title>აქციები</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="stylesheet" href="../css/style.css">
 	<link rel="stylesheet" href="../css/products.css">
 	<link rel="stylesheet" href="../css/header.css">
