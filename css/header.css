@@ -101,14 +101,16 @@ header {
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
-	width: 38px;
-	height: 38px;
-	background: transparent;
+	width: 40px;
+	height: 40px;
 	border: none;
 	cursor: pointer;
 	padding: 0;
 	margin-left: 10px;
 	z-index: 101;
+	background-color: transparent;
+	position: relative;
+	/* для абсолютного позиционирования span */
 }
 
 .hamburger:focus,
@@ -118,26 +120,49 @@ header {
 	box-shadow: none;
 }
 
+/* Hamburger to X animation */
 .hamburger span {
 	display: block;
-	width: 24px;
-	height: 3px;
+	width: 32px;
+	/* чуть длиннее */
+	height: 4px;
 	background: #fff;
-	margin: 4px 0;
+	margin: 0;
+	/* убираем отступы */
 	border-radius: 2px;
-	transition: 0.3s;
+	transition: transform 0.3s, opacity 0.3s;
+	position: absolute;
+	left: 4px;
+	top: 18px;
+}
+
+.hamburger span:nth-child(1) {
+	transform: translateY(-8px);
+}
+
+.hamburger span:nth-child(2) {
+	transform: none;
+	/* средняя линия */
+}
+
+.hamburger span:nth-child(3) {
+	transform: translateY(8px);
+	/* нижняя линия */
 }
 
 .hamburger.open span:nth-child(1) {
-	transform: translateY(7px) rotate(45deg);
+	transform: rotate(45deg);
+	/* диагональ вправо вниз */
 }
 
 .hamburger.open span:nth-child(2) {
 	opacity: 0;
+	/* скрываем */
 }
 
 .hamburger.open span:nth-child(3) {
-	transform: translateY(-7px) rotate(-45deg);
+	transform: rotate(-45deg);
+	/* диагональ влево вниз */
 }
 
 /* Responsive styles */
