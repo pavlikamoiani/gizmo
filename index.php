@@ -50,9 +50,22 @@
 			<h1>ტექნიკის მაღაზია Gizmo</h1>
 		</section>
 		<section class="category" id="category">
-			<?php include 'components/categories.php'; ?>
+			<?php
+			include 'components/categories.php';
+			?>
 		</section>
-
+		<?php
+		require_once __DIR__ . '/db/db.php';
+		$result = $conn->query("SELECT COUNT(*) as cnt FROM categories");
+		$row = $result ? $result->fetch_assoc() : ['cnt' => 0];
+		$totalCategories = (int) $row['cnt'];
+		$showCount = 6;
+		if ($totalCategories > $showCount):
+			?>
+			<div class="show-more-categories-wrap">
+				<a href="components/all-categories.php" class="show-more-categories-btn">ყველა კატეგორია</a>
+			</div>
+		<?php endif; ?>
 		<section class="products" id="product">
 			<h2>პროდუქცია</h2>
 			<?php include 'components/products.php'; ?>

@@ -27,18 +27,3 @@ for ($i = 0; $i < min($showCount, count($categories)); $i++) {
     <?php
 }
 ?>
-<?php if (count($categories) > $showCount): ?>
-    <div class="show-more-categories-container">
-        <a href="components/all-categories.php" class="show-more-categories-btn">ყველა კატეგორია</a>
-    </div>
-<?php endif; ?>
-<style>
-    /* Центрируем кнопку "ყველა კატეგორია" */
-    .show-more-categories-container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: 100%;
-        margin-top: 18px;
-    }
-</style>
