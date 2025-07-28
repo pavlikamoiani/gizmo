@@ -56,20 +56,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_product'])) {
 	$stmt->bind_param("sssssssiii", $title, $discount, $img, $colors, $oldPrice, $price, $monthly, $category_id, $subcategory_id, $id);
 	$stmt->execute();
 	$stmt->close();
-
-	// --- Update descriptions ---
-	$conn->query("DELETE FROM product_descriptions WHERE product_id=$id");
-	if (!empty($_POST['descriptions']) && is_array($_POST['descriptions'])) {
-		$desc_stmt = $conn->prepare("INSERT INTO product_descriptions (product_id, description) VALUES (?, ?)");
-		foreach ($_POST['descriptions'] as $desc) {
-			$desc = trim($desc);
-			if ($desc !== '') {
-				$desc_stmt->bind_param("is", $id, $desc);
-				$desc_stmt->execute();
-			}
-		}
-		$desc_stmt->close();
-	}
 	header("Location: " . $_SERVER['PHP_SELF']);
 	exit;
 }
@@ -79,13 +65,6 @@ $products = $conn->query("SELECT p.*, c.title as category_title, s.title as subc
     LEFT JOIN categories c ON p.category_id = c.id
     LEFT JOIN subcategories s ON p.subcategory_id = s.id
     ORDER BY p.id DESC");
-
-// --- Fetch all descriptions for JS ---
-$all_descriptions = [];
-$res = $conn->query("SELECT product_id, description FROM product_descriptions");
-while ($row = $res->fetch_assoc()) {
-	$all_descriptions[$row['product_id']][] = $row['description'];
-}
 
 if (isset($_GET['delete_product'])) {
 	$id = intval($_GET['delete_product']);
@@ -335,14 +314,9 @@ if (isset($_POST['import_products']) && isset($_FILES['products_excel']) && $_FI
 		closeEditProductModalBtn.onclick = function () {
 			editProductModal.style.display = 'none';
 		};
-		// --- Pass descriptions to edit modal ---
-		const productDescriptions = <?= json_encode($all_descriptions) ?>;
 		document.querySelectorAll('.edit-btn').forEach(btn => {
 			btn.onclick = function () {
-				const data = { ...this.dataset };
-				const pid = data.id;
-				data.descriptions = productDescriptions[pid] || [];
-				window.fillEditProductForm && window.fillEditProductForm(data);
+				window.fillEditProductForm && window.fillEditProductForm(this.dataset);
 				editProductModal.style.display = 'flex';
 			};
 		});

@@ -11,16 +11,6 @@ foreach ($subcategories as $sub) {
 		'title' => $sub['title']
 	];
 }
-
-// Fetch descriptions for JS
-$edit_descriptions = [];
-if (!empty($_GET['edit_id'])) {
-	$pid = intval($_GET['edit_id']);
-	$res = $conn->query("SELECT description FROM product_descriptions WHERE product_id=$pid");
-	while ($row = $res->fetch_assoc()) {
-		$edit_descriptions[] = $row['description'];
-	}
-}
 ?>
 <link rel="stylesheet" href="../../css/admin/add-product-modal.css">
 <form method="post" enctype="multipart/form-data" class="product-form" id="editProductForm" style="max-width:350px;">
@@ -68,14 +58,19 @@ if (!empty($_GET['edit_id'])) {
 			<!-- options will be filled by JS -->
 		</select>
 	</div>
-	<!-- Add this section at the bottom of the form -->
-	<div id="editDescriptionsSection" style="margin-top:18px;">
-		<label>Descriptions</label>
-		<div id="editDescriptionsList"></div>
-		<button type="button" id="editAddDescriptionBtn" style="margin-top:8px;">Add Description</button>
-	</div>
 	<button type="submit" name="edit_product" class="modal-btn">Save Changes</button>
 </form>
+<!-- Product Descriptions Section -->
+<div id="editDescriptionsSection">
+	<h3>Descriptions</h3>
+	<ul id="editDescriptionsList" style="padding-left:18px;"></ul>
+	<form id="addDescriptionForm" style="margin-top:10px;display:flex;gap:8px;">
+		<input type="text" id="newDescriptionInput" placeholder="Add description..." style="flex:1;" required>
+		<button type="submit">Add</button>
+	</form>
+</div>
+
+
 <script>
 	const editSubcategoriesByCategory = <?= json_encode($subcatMap) ?>;
 	const editCategorySelect = document.getElementById('edit_categorySelect');
@@ -209,16 +204,6 @@ if (!empty($_GET['edit_id'])) {
 			});
 		}
 		updateEditColorsField();
-
-		// Fill descriptions if provided
-		editDescriptionsList.innerHTML = '';
-		if (data.descriptions && Array.isArray(data.descriptions)) {
-			data.descriptions.forEach(function (desc) {
-				addEditDescriptionField(desc);
-			});
-		} else {
-			addEditDescriptionField();
-		}
 	};
 
 	document.getElementById('edit_img').addEventListener('change', function () {
@@ -237,17 +222,54 @@ if (!empty($_GET['edit_id'])) {
 		});
 	});
 
-	// --- Descriptions JS ---
-	const editDescriptionsList = document.getElementById('editDescriptionsList');
-	const editAddDescriptionBtn = document.getElementById('editAddDescriptionBtn');
-	function addEditDescriptionField(value = '') {
-		const div = document.createElement('div');
-		div.style.marginBottom = '6px';
-		div.innerHTML = `<input type="text" name="descriptions[]" value="${value.replace(/"/g, '&quot;')}" style="width:80%;" />
-			<button type="button" onclick="this.parentNode.remove()">Remove</button>`;
-		editDescriptionsList.appendChild(div);
+	// --- Product Descriptions AJAX ---
+	function fetchProductDescriptions(productId) {
+		const list = document.getElementById('editDescriptionsList');
+		list.innerHTML = '<li>Loading...</li>';
+		fetch('/gizmo/components/admin/product-descriptions.php?action=list&product_id=' + encodeURIComponent(productId))
+			.then(r => r.json())
+			.then(data => {
+				list.innerHTML = '';
+				if (data.length === 0) {
+					list.innerHTML = '<li style="color:#888;">No descriptions yet.</li>';
+				} else {
+					data.forEach(desc => {
+						const li = document.createElement('li');
+						li.textContent = desc.description;
+						list.appendChild(li);
+					});
+				}
+			});
 	}
-	editAddDescriptionBtn.onclick = function () {
-		addEditDescriptionField();
+
+	document.getElementById('addDescriptionForm').addEventListener('submit', function (e) {
+		e.preventDefault();
+		const input = document.getElementById('newDescriptionInput');
+		const desc = input.value.trim();
+		const productId = document.getElementById('edit_id').value;
+		if (!desc || !productId) return;
+		fetch('/gizmo/components/admin/product-descriptions.php', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+			body: 'action=add&product_id=' + encodeURIComponent(productId) + '&description=' + encodeURIComponent(desc)
+		})
+			.then(r => r.json())
+			.then(data => {
+				if (data.success) {
+					input.value = '';
+					fetchProductDescriptions(productId);
+				}
+			});
+	});
+
+	// Extend fillEditProductForm to load descriptions
+	const origFillEditProductForm = window.fillEditProductForm;
+	window.fillEditProductForm = function (data) {
+		origFillEditProductForm(data);
+		if (data.id) {
+			fetchProductDescriptions(data.id);
+		} else {
+			document.getElementById('editDescriptionsList').innerHTML = '';
+		}
 	};
 </script>

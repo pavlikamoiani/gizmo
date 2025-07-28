@@ -42,20 +42,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_product'])) {
 	$stmt->bind_param("sssssssii", $title, $discount, $img, $colors_str, $oldPrice, $price, $monthly, $category_id, $subcategory_id);
 	$stmt->execute();
 	$stmt->close();
-
-	// --- Save descriptions ---
-	if (!empty($_POST['descriptions']) && is_array($_POST['descriptions'])) {
-		$product_id = $conn->insert_id;
-		$desc_stmt = $conn->prepare("INSERT INTO product_descriptions (product_id, description) VALUES (?, ?)");
-		foreach ($_POST['descriptions'] as $desc) {
-			$desc = trim($desc);
-			if ($desc !== '') 
-				$desc_stmt->bind_param("is", $product_id, $desc);
-				$desc_stmt->execute();
-			}
-		}
-		$desc_stmt->close();
-	}
 	header("Location: " . $_SERVER['REQUEST_URI']);
 	exit;
 }
@@ -114,12 +100,6 @@ foreach ($subcategories as $sub) {
 			<option value="0">None</option>
 			<!-- options will be filled by JS -->
 		</select>
-	</div>
-	<!-- Add this section at the bottom of the form -->
-	<div id="descriptionsSection" style="margin-top:18px;">
-		<label>Descriptions</label>
-		<div id="descriptionsList"></div>
-		<button type="button" id="addDescriptionBtn" style="margin-top:8px;">Add Description</button>
 	</div>
 	<button type="submit" name="add_product" class="modal-btn">Add Product</button>
 </form>
@@ -230,20 +210,4 @@ foreach ($subcategories as $sub) {
 			reader.readAsDataURL(file);
 		});
 	});
-
-	// --- Descriptions JS ---
-	const descriptionsList = document.getElementById('descriptionsList');
-	const addDescriptionBtn = document.getElementById('addDescriptionBtn');
-	function addDescriptionField(value = '') {
-		const div = document.createElement('div');
-		div.style.marginBottom = '6px';
-		div.innerHTML = `<input type="text" name="descriptions[]" value="${value.replace(/"/g, '&quot;')}" style="width:80%;" />
-			<button type="button" onclick="this.parentNode.remove()">Remove</button>`;
-		descriptionsList.appendChild(div);
-	}
-	addDescriptionBtn.onclick = function () {
-		addDescriptionField();
-	};
-	// Optionally add one field by default
-	if (descriptionsList.children.length === 0) addDescriptionField();
 </script>
