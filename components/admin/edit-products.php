@@ -13,8 +13,8 @@ foreach ($subcategories as $sub) {
 }
 ?>
 <link rel="stylesheet" href="../../css/admin/add-product-modal.css">
-<form method="post" action="/gizmo/admin/update_product.php" enctype="multipart/form-data" class="product-form"
-	id="editProductForm" style="max-width:350px;">
+<form method="post" action="/gizmo/components/admin/update_product.php" enctype="multipart/form-data"
+	class="product-form" id="editProductForm" style="max-width:350px;">
 	<input type="hidden" name="id" id="edit_id">
 	<input type="hidden" name="current_img" id="edit_current_img">
 	<label for="edit_title">Title*</label>
@@ -81,11 +81,12 @@ foreach ($subcategories as $sub) {
 	const editDescContainer = document.querySelector('.edit-description-fields');
 	const editAddDescBtn = document.getElementById('editAddDescriptionBtn');
 
-	function createEditDescriptionField(value = '') {
+	function createEditDescriptionField(value = '', desc_id = '') {
 		const field = document.createElement('div');
 		field.className = 'description-field';
 		field.innerHTML = `
 			<textarea name="descriptions[]" rows="2" style="width:100%;margin-bottom:8px;" placeholder="Product description point">${value}</textarea>
+			<input type="hidden" name="description_ids[]" value="${desc_id}">
 			<button type="button" class="remove-description btn-small">Remove</button>
 		`;
 
@@ -194,9 +195,12 @@ foreach ($subcategories as $sub) {
 		document.getElementById('edit_oldPrice').value = data.oldprice || '';
 		document.getElementById('edit_price').value = data.price || '';
 		document.getElementById('edit_monthly').value = data.monthly || '';
-		document.getElementById('edit_categorySelect').value = data.category || '';
 		document.getElementById('edit_current_img').value = data.img || '';
+
+		// Set category and update subcategory options
 		const catId = data.category || '';
+		document.getElementById('edit_categorySelect').value = catId;
+
 		const subcats = editSubcategoriesByCategory[catId] || [];
 		editSubcategorySelect.innerHTML = '<option value="0">None</option>';
 		if (subcats.length > 0) {
@@ -210,7 +214,12 @@ foreach ($subcategories as $sub) {
 		} else {
 			editSubcategoryWrap.style.display = 'none';
 		}
-		editSubcategorySelect.value = data.subcategory || "0";
+
+		// Set subcategory value after options are populated
+		const subId = data.subcategory || "0";
+		editSubcategorySelect.value = subId;
+
+		// Preview images
 		const preview = document.getElementById('edit_img_preview');
 		preview.innerHTML = '';
 		if (data.img) {
@@ -220,6 +229,8 @@ foreach ($subcategories as $sub) {
 				}
 			});
 		}
+
+		// Set colors
 		editColorsArr = [];
 		if (data.colors) {
 			data.colors.split(',').forEach(function (color) {
@@ -228,13 +239,17 @@ foreach ($subcategories as $sub) {
 		}
 		updateEditColorsField();
 
+		// Clear existing description fields
 		editDescContainer.innerHTML = '';
 
+		// Add description fields based on data
 		if (data.descriptions && data.descriptions.length > 0) {
-			data.descriptions.forEach(function (desc) {
-				editDescContainer.appendChild(createEditDescriptionField(desc));
+			data.descriptions.forEach(function (desc, index) {
+				const desc_id = data.description_ids && data.description_ids[index] ? data.description_ids[index] : '';
+				editDescContainer.appendChild(createEditDescriptionField(desc, desc_id));
 			});
 		} else {
+			// Add one empty field if no descriptions
 			editDescContainer.appendChild(createEditDescriptionField());
 		}
 	};

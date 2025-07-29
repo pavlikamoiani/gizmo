@@ -251,8 +251,8 @@ if (isset($_POST['import_products']) && isset($_FILES['products_excel']) && $_FI
 						data-oldprice="<?= htmlspecialchars($row['oldPrice'], ENT_QUOTES) ?>"
 						data-price="<?= htmlspecialchars($row['price'], ENT_QUOTES) ?>"
 						data-monthly="<?= htmlspecialchars($row['monthly'], ENT_QUOTES) ?>"
-						data-category="<?= htmlspecialchars($row['category_id'], ENT_QUOTES) ?>"
-						data-subcategory="<?= htmlspecialchars($row['subcategory_id'], ENT_QUOTES) ?>">
+						data-category="<?= $row['category_id'] ?>"
+						data-subcategory="<?= $row['subcategory_id'] ? $row['subcategory_id'] : '0' ?>">
 						<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" style="vertical-align:middle;"
 							fill="none" viewBox="0 0 24 24" stroke="currentColor">
 							<path stroke-width="2"
@@ -316,8 +316,23 @@ if (isset($_POST['import_products']) && isset($_FILES['products_excel']) && $_FI
 		};
 		document.querySelectorAll('.edit-btn').forEach(btn => {
 			btn.onclick = function () {
-				window.fillEditProductForm && window.fillEditProductForm(this.dataset);
-				editProductModal.style.display = 'flex';
+				const productId = this.dataset.id;
+				fetch('/gizmo/components/admin/get_product_data.php?id=' + productId)
+					.then(response => {
+						if (!response.ok) {
+							throw new Error('Network response was not ok');
+						}
+						return response.json();
+					})
+					.then(data => {
+						console.log("Product data received:", data);
+						window.fillEditProductForm && window.fillEditProductForm(data);
+						editProductModal.style.display = 'flex';
+					})
+					.catch(error => {
+						console.error('Error loading product data:', error);
+						alert('Error loading product data. See console for details.');
+					});
 			};
 		});
 	</script>

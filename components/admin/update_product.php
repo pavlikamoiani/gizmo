@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../db/db.php';
+require_once __DIR__ . '/../../db/db.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_product'])) {
 	$id = intval($_POST['id'] ?? 0);
@@ -67,14 +67,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_product'])) {
 		$desc_stmt->close();
 	}
 
-	// Fixed redirect - go back to the page that submitted the form
-	// or fall back to admin page if referrer is not available
-	$redirect = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : "/gizmo/admin/";
-	header("Location: " . $redirect);
+	// Redirect back to the admin products page
+	header("Location: /gizmo/components/admin/products-list.php");
 	exit;
 }
 
 // If not a POST request or missing edit_product parameter
-header("Location: /gizmo/admin/");
+header("Location: /gizmo/components/admin/products-list.php");
 exit;
 ?>
