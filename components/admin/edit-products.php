@@ -60,16 +60,6 @@ foreach ($subcategories as $sub) {
 	</div>
 	<button type="submit" name="edit_product" class="modal-btn">Save Changes</button>
 </form>
-<!-- Product Descriptions Section -->
-<div id="editDescriptionsSection">
-	<h3>Descriptions</h3>
-	<ul id="editDescriptionsList" style="padding-left:18px;"></ul>
-	<form id="addDescriptionForm" style="margin-top:10px;display:flex;gap:8px;">
-		<input type="text" id="newDescriptionInput" placeholder="Add description..." style="flex:1;" required>
-		<button type="submit">Add</button>
-	</form>
-</div>
-
 
 <script>
 	const editSubcategoriesByCategory = <?= json_encode($subcatMap) ?>;
@@ -221,55 +211,4 @@ foreach ($subcategories as $sub) {
 			reader.readAsDataURL(file);
 		});
 	});
-
-	// --- Product Descriptions AJAX ---
-	function fetchProductDescriptions(productId) {
-		const list = document.getElementById('editDescriptionsList');
-		list.innerHTML = '<li>Loading...</li>';
-		fetch('/gizmo/components/admin/product-descriptions.php?action=list&product_id=' + encodeURIComponent(productId))
-			.then(r => r.json())
-			.then(data => {
-				list.innerHTML = '';
-				if (data.length === 0) {
-					list.innerHTML = '<li style="color:#888;">No descriptions yet.</li>';
-				} else {
-					data.forEach(desc => {
-						const li = document.createElement('li');
-						li.textContent = desc.description;
-						list.appendChild(li);
-					});
-				}
-			});
-	}
-
-	document.getElementById('addDescriptionForm').addEventListener('submit', function (e) {
-		e.preventDefault();
-		const input = document.getElementById('newDescriptionInput');
-		const desc = input.value.trim();
-		const productId = document.getElementById('edit_id').value;
-		if (!desc || !productId) return;
-		fetch('/gizmo/components/admin/product-descriptions.php', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-			body: 'action=add&product_id=' + encodeURIComponent(productId) + '&description=' + encodeURIComponent(desc)
-		})
-			.then(r => r.json())
-			.then(data => {
-				if (data.success) {
-					input.value = '';
-					fetchProductDescriptions(productId);
-				}
-			});
-	});
-
-	// Extend fillEditProductForm to load descriptions
-	const origFillEditProductForm = window.fillEditProductForm;
-	window.fillEditProductForm = function (data) {
-		origFillEditProductForm(data);
-		if (data.id) {
-			fetchProductDescriptions(data.id);
-		} else {
-			document.getElementById('editDescriptionsList').innerHTML = '';
-		}
-	};
 </script>
