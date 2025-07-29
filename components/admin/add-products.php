@@ -41,7 +41,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_product'])) {
 	$stmt = $conn->prepare("INSERT INTO products (title, discount, img, colors, oldPrice, price, monthly, category_id, subcategory_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
 	$stmt->bind_param("sssssssii", $title, $discount, $img, $colors_str, $oldPrice, $price, $monthly, $category_id, $subcategory_id);
 	$stmt->execute();
+	$product_id = $conn->insert_id;
 	$stmt->close();
+
+	// Save product descriptions
+	if (isset($_POST['descriptions']) && is_array($_POST['descriptions'])) {
+		$desc_stmt = $conn->prepare("INSERT INTO product_descriptions (product_id, description) VALUES (?, ?)");
+		foreach ($_POST['descriptions'] as $desc) {
+			if (trim($desc) !== '') {
+				$desc_stmt->bind_param("is", $product_id, $desc);
+				$desc_stmt->execute();
+			}
+		}
+		$desc_stmt->close();
+	}
+
 	header("Location: " . $_SERVER['REQUEST_URI']);
 	exit;
 }
@@ -101,6 +115,21 @@ foreach ($subcategories as $sub) {
 			<!-- options will be filled by JS -->
 		</select>
 	</div>
+
+	<div id="descriptionsContainer">
+		<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+			<label>Descriptions</label>
+			<button type="button" id="addDescriptionBtn" class="btn-small">+ Add Description</button>
+		</div>
+		<div class="description-fields">
+			<div class="description-field">
+				<textarea name="descriptions[]" rows="2" style="width:100%;margin-bottom:8px;"
+					placeholder="Product description point"></textarea>
+				<button type="button" class="remove-description btn-small">Remove</button>
+			</div>
+		</div>
+	</div>
+
 	<button type="submit" name="add_product" class="modal-btn">Add Product</button>
 </form>
 <script>
@@ -195,6 +224,36 @@ foreach ($subcategories as $sub) {
 		}
 	};
 
+	// Description fields management
+	const descContainer = document.querySelector('.description-fields');
+	const addDescBtn = document.getElementById('addDescriptionBtn');
+
+	function createDescriptionField(value = '') {
+		const field = document.createElement('div');
+		field.className = 'description-field';
+		field.innerHTML = `
+			<textarea name="descriptions[]" rows="2" style="width:100%;margin-bottom:8px;" placeholder="Product description point">${value}</textarea>
+			<button type="button" class="remove-description btn-small">Remove</button>
+		`;
+
+		field.querySelector('.remove-description').addEventListener('click', function () {
+			field.remove();
+		});
+
+		return field;
+	}
+
+	addDescBtn.addEventListener('click', function () {
+		descContainer.appendChild(createDescriptionField());
+	});
+
+	// Add event listeners to initial remove buttons
+	document.querySelectorAll('.remove-description').forEach(button => {
+		button.addEventListener('click', function () {
+			this.closest('.description-field').remove();
+		});
+	});
+
 	document.getElementById('img').addEventListener('change', function () {
 		const preview = document.getElementById('img_preview');
 		preview.innerHTML = '';
@@ -211,3 +270,19 @@ foreach ($subcategories as $sub) {
 		});
 	});
 </script>
+<style>
+	.btn-small {
+		padding: 2px 8px;
+		background: #f1f1f1;
+		border: 1px solid #ccc;
+		border-radius: 3px;
+		cursor: pointer;
+		font-size: 12px;
+	}
+
+	.description-field {
+		margin-bottom: 12px;
+		padding-bottom: 12px;
+		border-bottom: 1px dashed #eee;
+	}
+</style>

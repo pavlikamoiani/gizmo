@@ -13,7 +13,8 @@ foreach ($subcategories as $sub) {
 }
 ?>
 <link rel="stylesheet" href="../../css/admin/add-product-modal.css">
-<form method="post" enctype="multipart/form-data" class="product-form" id="editProductForm" style="max-width:350px;">
+<form method="post" action="/gizmo/admin/update_product.php" enctype="multipart/form-data" class="product-form"
+	id="editProductForm" style="max-width:350px;">
 	<input type="hidden" name="id" id="edit_id">
 	<input type="hidden" name="current_img" id="edit_current_img">
 	<label for="edit_title">Title*</label>
@@ -58,6 +59,17 @@ foreach ($subcategories as $sub) {
 			<!-- options will be filled by JS -->
 		</select>
 	</div>
+
+	<div id="editDescriptionsContainer">
+		<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+			<label>Descriptions</label>
+			<button type="button" id="editAddDescriptionBtn" class="btn-small">+ Add Description</button>
+		</div>
+		<div class="edit-description-fields">
+			<!-- Description fields will be added here dynamically -->
+		</div>
+	</div>
+
 	<button type="submit" name="edit_product" class="modal-btn">Save Changes</button>
 </form>
 
@@ -66,6 +78,27 @@ foreach ($subcategories as $sub) {
 	const editCategorySelect = document.getElementById('edit_categorySelect');
 	const editSubcategoryWrap = document.getElementById('edit_subcategoryWrap');
 	const editSubcategorySelect = document.getElementById('edit_subcategorySelect');
+	const editDescContainer = document.querySelector('.edit-description-fields');
+	const editAddDescBtn = document.getElementById('editAddDescriptionBtn');
+
+	function createEditDescriptionField(value = '') {
+		const field = document.createElement('div');
+		field.className = 'description-field';
+		field.innerHTML = `
+			<textarea name="descriptions[]" rows="2" style="width:100%;margin-bottom:8px;" placeholder="Product description point">${value}</textarea>
+			<button type="button" class="remove-description btn-small">Remove</button>
+		`;
+
+		field.querySelector('.remove-description').addEventListener('click', function () {
+			field.remove();
+		});
+
+		return field;
+	}
+
+	editAddDescBtn.addEventListener('click', function () {
+		editDescContainer.appendChild(createEditDescriptionField());
+	});
 
 	editCategorySelect.addEventListener('change', function () {
 		const catId = this.value;
@@ -194,6 +227,16 @@ foreach ($subcategories as $sub) {
 			});
 		}
 		updateEditColorsField();
+
+		editDescContainer.innerHTML = '';
+
+		if (data.descriptions && data.descriptions.length > 0) {
+			data.descriptions.forEach(function (desc) {
+				editDescContainer.appendChild(createEditDescriptionField(desc));
+			});
+		} else {
+			editDescContainer.appendChild(createEditDescriptionField());
+		}
 	};
 
 	document.getElementById('edit_img').addEventListener('change', function () {
@@ -212,3 +255,19 @@ foreach ($subcategories as $sub) {
 		});
 	});
 </script>
+<style>
+	.btn-small {
+		padding: 2px 8px;
+		background: #f1f1f1;
+		border: 1px solid #ccc;
+		border-radius: 3px;
+		cursor: pointer;
+		font-size: 12px;
+	}
+
+	.description-field {
+		margin-bottom: 12px;
+		padding-bottom: 12px;
+		border-bottom: 1px dashed #eee;
+	}
+</style>
